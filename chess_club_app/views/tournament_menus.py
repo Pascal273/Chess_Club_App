@@ -1,18 +1,18 @@
-import chess_club_app.views.tools as tools
+import chess_club_app.views.views_tools as tools
 
 
 class TournamentMenu:
 
     def __init__(self):
         self.options = """
-                    ---Tournament Menu---
+                     ---Tournament Menu---
 
-                    [1] New Tournament
-                    [2] Load Tournament
-                    [3] Edit Tournament
-                    [4] Delete Tournament
+                     [1] New Tournament
+                     [2] Load Tournament
+                     [3] Edit Tournament
+                     [4] Delete Tournament
             
-                    [0] Return to Home
+                     [0] Return to Home
         """
         self.tournament_menu()
         self.ask_user()

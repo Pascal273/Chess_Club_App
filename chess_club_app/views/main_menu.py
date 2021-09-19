@@ -1,4 +1,4 @@
-import chess_club_app.views.tools as tools
+import chess_club_app.views.views_tools as tools
 from chess_club_app.views.player_menus import PlayerMenu
 from chess_club_app.views.tournament_menus import TournamentMenu
 
@@ -9,12 +9,12 @@ class MainMenu:
         """MainMenu Constructor"""
 
         self.menu_options = """
-                    --------Home---------
+                     --------Home---------
                     
-                    [1] Player Menu
-                    [2] Tournament Menu
+                     [1] Player Menu
+                     [2] Tournament Menu
             
-                    [0] Exit Chess App
+                     [0] Exit Chess App
         """
 
         self.show_main_menu()
