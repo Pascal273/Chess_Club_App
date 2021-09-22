@@ -8,36 +8,15 @@ class MainMenu:
     def __init__(self):
         """MainMenu Constructor"""
 
-        self.menu_options = """
-                     --------Home---------
-                    
-                     [1] Player Menu
-                     [2] Tournament Menu
-            
-                     [0] Exit Chess App
-        """
-
+        self.options = {
+            "Player Menu": PlayerMenu,
+            "Tournament Menu": TournamentMenu
+        }
         self.show_main_menu()
-        self.ask_user()
 
     def show_main_menu(self):
         """Shows the Main Menu"""
+
         tools.cls()
         tools.print_logo()
-        print(self.menu_options)
-
-    def ask_user(self):
-        answer = input("                What would you like to do? ")
-
-        if answer == "1":
-            PlayerMenu()
-
-        elif answer == "2":
-            TournamentMenu()
-
-        elif answer == "0":
-            tools.cls()
-            exit()
-
-        else:
-            MainMenu()
+        tools.print_menu(title="Home", options=self.options)

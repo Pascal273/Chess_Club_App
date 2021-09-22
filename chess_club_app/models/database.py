@@ -1,9 +1,9 @@
 import os
 
-from tinydb import TinyDB
+from tinydb import TinyDB, Query
 
 DB_FILE = "database.json"
-DIRECTORY = "../database"
+DIRECTORY = "./database"
 
 
 class Database:
@@ -13,11 +13,12 @@ class Database:
 
         if not os.path.exists(DIRECTORY):
             os.makedirs(DIRECTORY)
-        self.players = {}
-        self.tournaments = {}
+
         self.database = TinyDB(f"{DIRECTORY}/{DB_FILE}")
+        self.players_table = self.database.table("players")
+        self.tournaments = {}
 
     def save_player(self, serialized_player):
         """insert a serialized player in the Database"""
 
-        self.database.insert(serialized_player)
+        self.players_table.insert(serialized_player)
