@@ -1,9 +1,8 @@
 import os
 import datetime
-
-import chess_club_app.views.main_menu as main_menu
-import chess_club_app.views.player_menus as player_menu
-import chess_club_app.views.tournament_menus as tournament_menu
+from chess_club_app.views import main_menu
+from chess_club_app.views import player_menus
+from chess_club_app.views import tournament_menus
 
 
 def print_logo():
@@ -62,21 +61,21 @@ def turn_back_to(current_class_name: str):
         "ShowAllPlayers",
         "SearchPlayerMenu",
     ]:
-        player_menu.PlayerMenu()
+        player_menus.PlayerMenu()
 
     elif current_class_name in [
         "EditPlayer",
         "DeletePlayer",
         "EditOrDelete"
     ]:
-        player_menu.SearchPlayerMenu()
+        player_menus.SearchPlayerMenu()
 
     elif current_class_name in [
         "NewTournament",
         "LoadTournament",
         "DeleteTournament"
     ]:
-        tournament_menu.TournamentMenu()
+        tournament_menus.TournamentMenu()
 
 
 def all_player_details(player):
