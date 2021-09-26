@@ -8,6 +8,7 @@ class MainMenu:
     def __init__(self):
         """MainMenu Constructor"""
 
+        self.title = "Home"
         self.options = {
             "Player Menu": PlayerMenu,
             "Tournament Menu": TournamentMenu
@@ -19,4 +20,9 @@ class MainMenu:
 
         tools.cls()
         tools.print_logo()
-        tools.print_menu(title="Home", options=self.options)
+        menu = tools.MenuScreen(
+            title=self.title,
+            options=self.options,
+            current_site=self.__class__.__name__)
+        menu.print_menu()
+        menu.user_action()
