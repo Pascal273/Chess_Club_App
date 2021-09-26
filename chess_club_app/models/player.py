@@ -11,6 +11,7 @@ class Player:
         self.rating = rating
 
     def create(self):
+        """Creates and returns a new player"""
         player = {
             "first_name": self.first_name,
             "last_name": self.last_name,

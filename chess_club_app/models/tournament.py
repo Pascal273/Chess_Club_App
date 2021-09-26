@@ -26,3 +26,16 @@ class Tournament:
         self.players = players
         self.time_control = time_control
         self.description = description
+
+    def create(self):
+        """Creates and returns a new tournament"""
+        tournament = {
+            "name": self.name,
+            "location": self.location,
+            "date": self.date,
+            "rounds": self.rounds,
+            "players": self.players,
+            "time_control": self.time_control,
+            "description": self.description
+        }
+        return tournament

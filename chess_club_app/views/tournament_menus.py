@@ -3,9 +3,11 @@ import chess_club_app.controllers.tools as tools
 
 
 class TournamentMenu:
+    """Displays the tournament main menu"""
 
     def __init__(self):
-        """"""
+        """TournamentMenu constructor"""
+
         self.title = "Tournament Menu"
         self.options = {
              "Create New Tournament": NewTournament,
