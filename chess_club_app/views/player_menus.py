@@ -1,6 +1,7 @@
 from time import sleep
 
-import chess_club_app.views.views_tools as tools
+import chess_club_app.controllers.menu_creator
+import chess_club_app.controllers.tools as tools
 from chess_club_app.controllers.database_operator import DatabaseOperator
 
 
@@ -23,7 +24,7 @@ class PlayerMenu:
 
         tools.cls()
         tools.print_logo()
-        menu = tools.MenuScreen(self.title, self.options, self.__class__.__name__)
+        menu = chess_club_app.controllers.menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
         menu.print_menu()
         menu.user_action()
 
@@ -43,7 +44,7 @@ class AddNewPlayer:
         self.sex = ""
         self.rating = "-1"
 
-        self.menu = tools.MenuScreen(title=self.title, current_site=self.__class__.__name__)
+        self.menu = chess_club_app.controllers.menu_creator.MenuScreen(title=self.title, current_site=self.__class__.__name__)
         self.enter_player_details()
         self.check_details()
 
@@ -84,7 +85,7 @@ class AddNewPlayer:
 
         tools.cls()
         tools.print_logo()
-        menu = tools.MenuScreen("Check and Approve")
+        menu = chess_club_app.controllers.menu_creator.MenuScreen("Check and Approve")
         menu.print_menu()
 
         print(f"""
@@ -124,7 +125,7 @@ class ShowAllPlayers:
             "Edit Player": SearchPlayerMenu,
             "Delete player": DeletePlayer
         }
-        self.menu = tools.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.menu = chess_club_app.controllers.menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
         self.all_players_list = DatabaseOperator().load_all_players()
         self.show_all()
 
@@ -163,7 +164,7 @@ class SearchPlayerMenu:
             "Search by Sex": self.search_sex,
             "Get player directly by ID": self.get_by_id
         }
-        self.menu = tools.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.menu = chess_club_app.controllers.menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
         self.show_options()
 
     def show_options(self):
@@ -242,7 +243,7 @@ class EditOrDelete:
             "Edit Player": self.edit,
             "Delete Player": self.delete,
         }
-        self.menu = tools.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.menu = chess_club_app.controllers.menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
         self.player_obj = player_obj
 
         tools.cls()
@@ -276,7 +277,7 @@ class EditPlayer:
             "Change Rating": self.update_rating,
             "Delete the Player": self.open_delete_player
         }
-        self.menu = tools.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.menu = chess_club_app.controllers.menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
         self.player_object = player_object
 
         tools.cls()
@@ -371,7 +372,7 @@ class DeletePlayer:
             f"Please confirm: Delete the player {player_object['first_name']} "
             f"{player_object['last_name']} from the database!": self.delete
         }
-        self.menu = tools.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.menu = chess_club_app.controllers.menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
         self.player_object = player_object
 
         tools.cls()
