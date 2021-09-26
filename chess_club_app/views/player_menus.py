@@ -133,8 +133,12 @@ class ShowAllPlayers:
         tools.print_logo()
         self.menu.print_menu(title_only=True)
 
-        for player in self.all_players_list:
-            print(tools.all_player_details(player))
+        if len(self.all_players_list) == 0:
+            print("\n                     No Players in Database!")
+
+        else:
+            for player in self.all_players_list:
+                print(tools.all_player_details(player))
 
         self.menu.print_menu(options_only=True)
         self.menu.user_action()
