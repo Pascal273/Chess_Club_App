@@ -105,10 +105,10 @@ class MenuScreen:
         answer = ""
 
         while not valid_menu_choice(answer, self.opt_num):
-            answer = int(input(f"{self.menu_spacer}What would you like to do? "))
+            answer = input(f"{self.menu_spacer}What would you like to do? ")
 
-        if answer == 0:
+        if int(answer) == 0:
             turn_back_to(self.current_site)
 
         else:
-            self.options.get(self.option_keys[answer-1])()
+            self.options.get(self.option_keys[int(answer)-1])()
