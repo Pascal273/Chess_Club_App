@@ -29,6 +29,29 @@ def cls():
     os.system("cls" if os.name == "nt" else "clear")
 
 
+def date_today():
+    """Returns current date in format: DD.MM.YYYY"""
+
+    date = datetime.date.today().strftime("%d.%m.%Y")
+    return date
+
+
+def date_range(start_date, end_date):
+    """Takes 2 dates and returns a list of all dates,
+       from the start date to the end date"""
+
+    s_date_obj = datetime.datetime.strptime(start_date, "%d.%m.%Y")
+    e_date_obj = datetime.datetime.strptime(end_date, "%d.%m.%Y")
+
+    delta = e_date_obj - s_date_obj
+
+    days_list = []
+    for date in range(delta.days + 1):
+        day = s_date_obj + datetime.timedelta(days=date)
+        days_list.append(datetime.datetime.strftime(day, "%d.%m.%Y"))
+    return days_list
+
+
 def valid_menu_choice(answer, opt_num):
     """Checks if the users choice is valid
        valid -> returns: True
@@ -72,6 +95,7 @@ def turn_back_to(current_class_name: str):
 
     elif current_class_name in [
         "NewTournament",
+        "SelectPlayers",
         "LoadTournament",
         "DeleteTournament"
     ]:
@@ -84,9 +108,9 @@ def all_player_details(player):
 
     player_details = (f"""
                      ID:          {player.doc_id}
-                     First Name:  {player["first_name"]}
-                     Last Name :  {player["last_name"]}
-                     Birth Date:  {player["birth_date"]}
+                     First Name:  {player["first name"]}
+                     Last Name :  {player["last name"]}
+                     Birth Date:  {player["birth date"]}
                      Sex:         {player["sex"]}
                      Rating:      {player["rating"]}
         """)

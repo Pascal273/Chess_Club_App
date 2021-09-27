@@ -13,9 +13,9 @@ class Player:
     def create(self):
         """Creates and returns a new player"""
         player = {
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "birth_date": self.birth_date,
+            "first name": self.first_name,
+            "last name": self.last_name,
+            "birth date": self.birth_date,
             "sex": self.sex,
             "rating": self.rating
         }

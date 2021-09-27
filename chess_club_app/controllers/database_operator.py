@@ -22,12 +22,11 @@ class DatabaseOperator:
         self.database.players_table.insert(serialized_player)
 
     def load_all_players(self):
-        """Loads all players and returns them in a list """
+        """Loads all players and returns them in a list"""
 
         all_players_serialized = self.database.players_table.all()
-        all_players_list = [player for player in all_players_serialized]
 
-        return all_players_list
+        return all_players_serialized
 
     def search_for(self, filter_by, key_word):
         """Loads all players, filters them by a given key
