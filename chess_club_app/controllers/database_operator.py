@@ -35,7 +35,7 @@ class DatabaseOperator:
         results = self.database.players_table.search(self.player[filter_by] == key_word)
         return results
 
-    def player_by_id(self, player_id):
+    def player_by_id(self, player_id: int):
         """Takes a player ID and returns
            the matching Player as a player object"""
 

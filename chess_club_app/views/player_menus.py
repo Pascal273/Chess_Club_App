@@ -127,7 +127,7 @@ class ShowAllPlayers:
     """Displays all players incl. table their information.
        No options will be displayed if 'show_options' is False"""
 
-    def __init__(self, show_options: bool = True):
+    def __init__(self):
         self.title = "Show all Players"
         self.options = {
             "Show all players sort by ID": self.sort_by_id,
@@ -158,9 +158,8 @@ class ShowAllPlayers:
         self.menu_2.print_menu(title_only=True)
         self.show_all()
 
-        if show_options:
-            self.menu_2.print_menu(options_only=True)
-            self.menu_2.user_action()
+        self.menu_2.print_menu(options_only=True)
+        self.menu_2.user_action()
 
     def sort_by_id(self):
         pass
@@ -190,9 +189,8 @@ class ShowAllPlayers:
         if len(self.all_players) == 0:
             print("\n                     No Players in Database!")
 
-        else:
-            for player in self.all_players:
-                print(tools.all_player_details(player))
+        for player in self.all_players:
+            print(tools.all_player_details(player))
 
 
 class SearchPlayer:

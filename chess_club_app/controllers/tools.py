@@ -137,7 +137,7 @@ def valid_sex(sex_text):
 
 
 def valid_rating(number_string):
-    """Checks if number is a valid, not negative, int or float
+    """Checks if number is valid, not negative, int or float
        and returns False or True"""
 
     try:
@@ -148,4 +148,19 @@ def valid_rating(number_string):
 
     except ValueError:
         print("\n                     It has to be a 0 or positive number!")
+        return False
+
+
+def valid_id(number_string):
+    """Checks if number is a valid id, int > 1
+           and returns False or True"""
+
+    try:
+        if int(number_string) > 0:
+            return True
+        else:
+            return False
+
+    except ValueError:
+        print("\n                     It has to be a positive number!")
         return False
