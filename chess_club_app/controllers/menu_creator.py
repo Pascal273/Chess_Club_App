@@ -61,7 +61,7 @@ class MenuScreen:
         elif self.current_site in [
             "AddNewPlayer",
             "ShowAllPlayers",
-            "SearchPlayerMenu",
+            "SearchPlayer",
         ]:
             turn_back_option = "Return to Player Menu"
 
@@ -75,6 +75,9 @@ class MenuScreen:
         elif self.current_site in ["NewTournament", "LoadTournament", "DeleteTournament"]:
             turn_back_option = "Return to Tournament Menu"
 
+        elif self.current_site in ["SelectPlayers"]:
+            turn_back_option = "Cancel tournament creation -> return to Tournament Menu"
+
         if len(self.options) == 0 or title_only:
             menu = f"\n{self.title_layout}\n"
             print(menu)
@@ -82,21 +85,21 @@ class MenuScreen:
         else:
             if type(self.options) is list:
                 for option in self.options:
-                    self.option_rows += f"{self.menu_spacer}[{self.opt_num}] {option}\n"
+                    self.option_rows += f"{self.menu_spacer}[{self.opt_num}] {option}\n\n"
                     self.option_keys.append(option)
                     self.opt_num += 1
 
             else:
                 for option, command in self.options.items():
-                    self.option_rows += f"{self.menu_spacer}[{self.opt_num}] {option}\n"
+                    self.option_rows += f"{self.menu_spacer}[{self.opt_num}] {option}\n\n"
                     self.option_keys.append(option)
                     self.opt_num += 1
 
             if not self.title or options_only:
-                menu = f"\n{self.option_rows}\n\n{self.menu_spacer}[0] {turn_back_option}\n"
+                menu = f"\n{self.option_rows}\n\n{self.menu_spacer}[0] {turn_back_option}\n\n"
 
             else:
-                menu = f"\n{self.title_layout}\n\n{self.option_rows}\n\n{self.menu_spacer}[0] {turn_back_option}\n"
+                menu = f"\n{self.title_layout}\n\n{self.option_rows}\n\n{self.menu_spacer}[0] {turn_back_option}\n\n\n"
 
             print(menu)
 
@@ -105,7 +108,7 @@ class MenuScreen:
         answer = ""
 
         while not valid_menu_choice(answer, self.opt_num):
-            answer = input(f"{self.menu_spacer}What would you like to do? ")
+            answer = input(f"\033[F{self.menu_spacer}What would you like to do? ")
 
         if int(answer) == 0:
             turn_back_to(self.current_site)

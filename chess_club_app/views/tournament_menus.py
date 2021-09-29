@@ -1,4 +1,4 @@
-import player_menus
+from chess_club_app.views import player_menus
 from chess_club_app.controllers import menu_creator
 from chess_club_app.controllers import tools
 from chess_club_app.controllers import tournament_operator
@@ -109,9 +109,9 @@ class SelectPlayers:
         """Select Players Constructor"""
 
         self.title = "Select Participants"
-        self.options = {
-            "Show all Players": player_menus.ShowAllPlayers
-        }
+        self.menu = menu_creator.MenuScreen(self.title)
+
+        player_menus.ShowAllPlayers(show_options=False)
 
 
 class LoadTournament:

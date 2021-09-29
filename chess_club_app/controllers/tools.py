@@ -82,7 +82,7 @@ def turn_back_to(current_class_name: str):
     elif current_class_name in [
         "AddNewPlayer",
         "ShowAllPlayers",
-        "SearchPlayerMenu",
+        "SearchPlayer",
     ]:
         player_menus.PlayerMenu()
 
@@ -91,7 +91,7 @@ def turn_back_to(current_class_name: str):
         "DeletePlayer",
         "EditOrDelete"
     ]:
-        player_menus.SearchPlayerMenu()
+        player_menus.SearchPlayer()
 
     elif current_class_name in [
         "NewTournament",

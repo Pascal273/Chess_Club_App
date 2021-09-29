@@ -15,7 +15,7 @@ class PlayerMenu:
         self.options = {
             "Add a new player": AddNewPlayer,
             "Show all players": ShowAllPlayers,
-            "Search Player": SearchPlayerMenu
+            "Search Player": SearchPlayer
         }
         self.player_main_menu()
 
@@ -124,9 +124,11 @@ class AddNewPlayer:
 
 
 class ShowAllPlayers:
+    """Displays all players incl. table their information.
+       No options will be displayed if 'show_options' is False"""
 
-    def __init__(self):
-        self.title = "Player Menu"
+    def __init__(self, show_options: bool = True):
+        self.title = "Show all Players"
         self.options = {
             "Show all players sort by ID": self.sort_by_id,
             "Show all players sort by first name": self.sort_by_first_name,
@@ -135,14 +137,13 @@ class ShowAllPlayers:
             "Show all players sort by sex": self.sort_by_sex,
             "Show all players sort by rating": self.sort_by_rating,
         }
+        self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
 
-        self.title_2 = "List of all Players"
+        self.title_2 = "All Players"
         self.options_2 = {
             "Add a new player": AddNewPlayer,
-            "Edit Player": SearchPlayerMenu
+            "Edit Player": SearchPlayer
         }
-
-        self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
         self.menu_2 = menu_creator.MenuScreen(self.title_2, self.options_2, self.__class__.__name__)
 
         self.all_players = DatabaseOperator().load_all_players()
@@ -151,7 +152,15 @@ class ShowAllPlayers:
         tools.print_logo()
         self.menu.print_menu()
         self.menu.user_action()
+
+        tools.cls()
+        tools.print_logo()
+        self.menu_2.print_menu(title_only=True)
         self.show_all()
+
+        if show_options:
+            self.menu_2.print_menu(options_only=True)
+            self.menu_2.user_action()
 
     def sort_by_id(self):
         pass
@@ -173,13 +182,10 @@ class ShowAllPlayers:
         self.all_players = sorted(self.all_players, key=lambda x: x.get('sex'))
 
     def sort_by_rating(self):
-        """sort´s all players by rating"""
-        self.all_players = sorted(self.all_players, key=lambda x: x.get('rating'))
+        """sort´s all players by rating from highest to lowest"""
+        self.all_players = sorted(self.all_players, key=lambda x: x.get('rating'), reverse=True)
 
     def show_all(self):
-        tools.cls()
-        tools.print_logo()
-        self.menu_2.print_menu(title_only=True)
 
         if len(self.all_players) == 0:
             print("\n                     No Players in Database!")
@@ -188,11 +194,8 @@ class ShowAllPlayers:
             for player in self.all_players:
                 print(tools.all_player_details(player))
 
-        self.menu_2.print_menu(options_only=True)
-        self.menu_2.user_action()
 
-
-class SearchPlayerMenu:
+class SearchPlayer:
     """ 1. Search for a player by asking the user for a key
         2. If more than one match: displays all players with a match
            and asks the user to pick a player
@@ -255,7 +258,7 @@ class SearchPlayerMenu:
             else:
                 print(f"{self.spacer}No Player with that ID found!")
                 sleep(3)
-                SearchPlayerMenu()
+                SearchPlayer()
 
         else:
             matches = DatabaseOperator().search_for(dict_key, wanted_value.capitalize())
@@ -263,7 +266,7 @@ class SearchPlayerMenu:
             if len(matches) == 0:
                 print(f"{self.spacer}No Player with that {dict_key.title()} found!")
                 sleep(3)
-                SearchPlayerMenu()
+                SearchPlayer()
 
             elif len(matches) > 1:
                 for player in matches:
@@ -346,7 +349,7 @@ class EditPlayer:
         print(f"{self.spacer}{self.player_object['first name']}´s "
               f"First Name successfully updated to {new_first_name}!")
         sleep(2)
-        SearchPlayerMenu()
+        SearchPlayer()
 
     def update_lastname(self):
         new_last_name = ""
@@ -360,7 +363,7 @@ class EditPlayer:
         print(f"{self.spacer}{self.player_object['first name']}´s "
               f"Last Name successfully updated to {new_last_name}!")
         sleep(2)
-        SearchPlayerMenu()
+        SearchPlayer()
 
     def update_birth_date(self):
         new_birth_date = ""
@@ -374,7 +377,7 @@ class EditPlayer:
         print(f"{self.spacer}{self.player_object['first name']}´s "
               f"Birth Date successfully updated to {new_birth_date}!")
         sleep(2)
-        SearchPlayerMenu()
+        SearchPlayer()
 
     def update_sex(self):
         new_sex = ""
@@ -388,7 +391,7 @@ class EditPlayer:
         print(f"{self.spacer}{self.player_object['first name']}´s "
               f"Sex successfully updated to {new_sex}!")
         sleep(2)
-        SearchPlayerMenu()
+        SearchPlayer()
 
     def update_rating(self):
         new_rating = "-1"
@@ -402,7 +405,7 @@ class EditPlayer:
         print(f"{self.spacer}{self.player_object['first name']}´s "
               f"Rating successfully updated to {new_rating}!")
         sleep(2)
-        SearchPlayerMenu()
+        SearchPlayer()
 
     def open_delete_player(self):
         DeletePlayer(self.player_object).delete()
@@ -436,4 +439,4 @@ class DeletePlayer:
         print(f"{self.spacer}The player: {self.player_object['first name']} "
               f"{self.player_object['last name']} successfully deleted!")
         sleep(2)
-        SearchPlayerMenu()
+        SearchPlayer()
