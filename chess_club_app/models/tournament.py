@@ -41,7 +41,7 @@ class Tournament:
             "name": self.name,
             "location": self.location,
             "date": self.date,
-            "number of rounds:": self.number_of_rounds,
+            "number of rounds": self.number_of_rounds,
             "rounds": self.rounds,
             "players": self.players,
             "time control": self.time_control,

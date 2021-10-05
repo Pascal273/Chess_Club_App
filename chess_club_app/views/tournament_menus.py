@@ -17,7 +17,8 @@ class TournamentMenu:
         self.title = "Tournament Menu"
         self.options = {
              "Create New Tournament": NewTournament,
-             "Load Tournament": LoadTournament,
+             "Show Tournaments": ShowTournaments,
+             "Play Tournament": PlayTournament,
              "Edit Tournament": EditTournament,
              "Delete Tournament": DeleteTournament
         }
@@ -76,7 +77,7 @@ class NewTournament:
         # ------------------------------------------Enter Name----------------------------------------------------------
 
         while len(self.name) < 3:
-            self.name = input(f"{self.spacer}What´s the name of the Tournament?: ")
+            self.name = input(f"{self.spacer}What´s the name of the Tournament?: ").title()
 
         # ------------------------------------------Enter Location------------------------------------------------------
 
@@ -86,22 +87,22 @@ class NewTournament:
         # ------------------------------------------Enter Dates---------------------------------------------------------
 
         while not util.valid_date(self.start_date):
-            date = input(
+            s_date = input(
                 f"\n{self.spacer}What´s the start date of the Tournament? (DD.MM.YYYY)\n"
                 f"{self.spacer}(If it´s today you can type 'today'): ")
-            if date == "today":
+            if s_date == "today":
                 self.start_date = util.date_today()
             else:
-                self.start_date = date
+                self.start_date = s_date
 # TODO second date question should come at the end of the tournament!
         while not util.valid_date(self.end_date):
-            date = input(
+            e_date = input(
                 f"\n{self.spacer}What´s the end date of the Tournament? (DD.MM.YYYY)\n"
                 f"{self.spacer}(If´s today you can type 'today'): ")
-            if date == "today":
+            if e_date == "today":
                 self.end_date = util.date_today()
             else:
-                self.end_date = date
+                self.end_date = e_date
 
         if self.start_date == self.end_date:
             self.date.append(self.start_date)
@@ -124,7 +125,7 @@ class NewTournament:
         # ------------------------------------------Enter Description---------------------------------------------------
 
         while len(self.description) < 1:
-            self.description = input(f"\n{self.spacer}Enter a Description: ")
+            self.description = input(f"\n{self.spacer}Enter a Description: ").capitalize()
 
         # ------------------------------------------Enter Select Players------------------------------------------------
 
@@ -152,7 +153,7 @@ class NewTournament:
                      Tournament Name:    {self.name}\n
                      Location:           {self.location}\n
                      Date(s):            {self.date}\n
-                     Nr. of  Rounds:     {self.number_of_rounds}\n
+                     Nr. of Rounds:      {self.number_of_rounds}\n
                      Time Control:       {self.time_control}\n
                      Participants:       {names}\n
                      Description:        {self.description}\n
@@ -283,7 +284,90 @@ class ShowPlayers:
                 print(util.all_player_details(player))
 
 
-class LoadTournament:
+class ShowTournaments:
+
+    def __init__(self):
+        self.title = "Show Tournaments"
+        self.options = {
+            "Show all Finished Tournaments": self.show_all_finished,
+            "Show all Unfinished Tournaments": self.show_all_unfinished,
+            "Search for a Tournament": self.search_for
+        }
+
+        self.menu = menu_creator.MenuScreen(
+            title=self.title,
+            options=self.options,
+            current_site=self.__class__.__name__
+        )
+
+        self.all_tournaments_serialized = Db().load_all_tournaments()
+
+        util.cls()
+        util.print_logo()
+        self.menu.print_menu()
+        self.menu.user_action()
+
+    def show_all_unfinished(self):
+
+        unfinished_tournaments = [
+            t for t in self.all_tournaments_serialized if len(t["rounds"]) < t["number of rounds"]]
+
+        menu = menu_creator.MenuScreen(
+            title="Unfinished Tournaments",
+            options={
+                "Edit a Tournament": EditTournament,
+                "Delete a Tournament": DeleteTournament
+            },
+            current_site=self.__class__.__name__
+        )
+
+        util.cls()
+        util.print_logo()
+        menu.print_menu(title_only=True)
+
+        if len(unfinished_tournaments) == 0:
+            print("\n                     No Unfinished Tournaments in Database!")
+
+        else:
+            for tournament in unfinished_tournaments:
+                print(util.all_tournament_details(tournament))
+
+        menu.print_menu(options_only=True)
+        menu.user_action()
+
+    def show_all_finished(self):
+
+        finished_tournaments = [
+            t for t in self.all_tournaments_serialized if len(t["rounds"]) == t["number of rounds"]]
+
+        menu = menu_creator.MenuScreen(
+            title="Finished Tournaments",
+            options={
+                "Edit a Tournament": EditTournament,
+                "Delete a Tournament": DeleteTournament
+            },
+            current_site=self.__class__.__name__
+        )
+
+        util.cls()
+        util.print_logo()
+        menu.print_menu(title_only=True)
+
+        if len(finished_tournaments) == 0:
+            print("\n                     No Finished Tournaments in Database!")
+
+        else:
+            for tournament in finished_tournaments:
+                print(util.all_tournament_details(tournament))
+
+        menu.print_menu(options_only=True)
+        menu.user_action()
+
+    def search_for(self):
+        pass
+
+
+class PlayTournament:
 
     def __init__(self):
         pass

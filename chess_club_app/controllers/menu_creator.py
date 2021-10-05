@@ -72,7 +72,12 @@ class MenuScreen:
         ]:
             turn_back_option = "Return to Search Player Menu"
 
-        elif self.current_site in ["NewTournament", "LoadTournament", "DeleteTournament"]:
+        elif self.current_site in [
+            "NewTournament",
+            "ShowTournaments",
+            "PlayTournament",
+            "DeleteTournament"
+        ]:
             turn_back_option = "Return to Tournament Menu"
 
         elif self.current_site in ["SelectPlayers", "ShowPlayers"]:

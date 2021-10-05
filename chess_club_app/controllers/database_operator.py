@@ -34,8 +34,8 @@ class DatabaseOperator:
 
         return all_players_serialized
 
-    def search_for(self, filter_by, key_word):
-        """Loads all players, filters them by a given key
+    def search_player(self, filter_by, key_word):
+        """Loads all players matching a given key
            and returns a dict of all matches"""
 
         results = self.database.players_table.search(self.player[filter_by] == key_word)
@@ -93,3 +93,17 @@ class DatabaseOperator:
         ).create()
 
         self.database.tournaments_table.insert(serialized_tournament)
+
+    def load_all_tournaments(self):
+        """Loads all players and returns them in a list"""
+
+        all_tournaments_serialized = self.database.tournaments_table.all()
+
+        return all_tournaments_serialized
+
+    def search_tournament(self, filter_by: str, key_word):
+        """Loads all tournaments matching a given key
+           and returns a dict of all matches"""
+
+        results = self.database.tournaments_table.search(self.player[filter_by] == key_word)
+        return results

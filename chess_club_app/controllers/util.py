@@ -97,7 +97,8 @@ def turn_back_to(current_class_name: str):
         "NewTournament",
         "SelectPlayers",
         "ShowPlayers",
-        "LoadTournament",
+        "ShowTournaments",
+        "PlayTournament",
         "DeleteTournament"
     ]:
         tournament_menus.TournamentMenu()
@@ -116,6 +117,39 @@ def all_player_details(player):
                      Rating:      {player["rating"]}
         """)
     return player_details
+
+
+def all_tournament_details(tournament):
+
+    player_name_list = [p["first name"] + " " + p["last name"] for p in tournament["players"]]
+    names = "\n"
+    for name in player_name_list:
+        names += f"                                    {name}\n"
+
+    if len(tournament["date"]) > 1:
+        dates = f'{tournament["date"][0]} - {tournament["date"][-1]}'
+    else:
+        dates = tournament["date"][0]
+
+    if len(tournament["rounds"]) == 0:
+        rounds = "No rounds played"
+    # TODO - display round results
+    else:
+        rounds = "Display round results"
+
+    tournament_details = (f"""
+                     ID:            {tournament.doc_id}
+                     Name:          {tournament["name"]}
+                     Location:      {tournament["location"]}
+                     Date(s):       {dates}
+                     Nr. of Rounds: {tournament["number of rounds"]}
+                     Time Control:  {tournament["time control"]}
+                     Participants:  {names}
+                     Description:   {tournament["description"]}\n
+                     Rounds:        {rounds}
+        """)
+
+    return tournament_details
 
 
 def valid_date(date_text):

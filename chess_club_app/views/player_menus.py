@@ -189,8 +189,9 @@ class ShowAllPlayers:
         if len(self.all_players) == 0:
             print("\n                     No Players in Database!")
 
-        for player in self.all_players:
-            print(util.all_player_details(player))
+        else:
+            for player in self.all_players:
+                print(util.all_player_details(player))
 
 
 class SearchPlayer:
@@ -259,7 +260,7 @@ class SearchPlayer:
                 SearchPlayer()
 
         else:
-            matches = DatabaseOperator().search_for(dict_key, wanted_value.capitalize())
+            matches = DatabaseOperator().search_player(dict_key, wanted_value.capitalize())
 
             if len(matches) == 0:
                 print(f"{self.spacer}No Player with that {dict_key.title()} found!")
