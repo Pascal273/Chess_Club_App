@@ -1,4 +1,4 @@
-from chess_club_app.controllers.tools import valid_menu_choice, turn_back_to
+from chess_club_app.controllers.util import valid_menu_choice, turn_back_to
 
 
 class MenuScreen:
@@ -75,7 +75,7 @@ class MenuScreen:
         elif self.current_site in ["NewTournament", "LoadTournament", "DeleteTournament"]:
             turn_back_option = "Return to Tournament Menu"
 
-        elif self.current_site in ["SelectPlayers"]:
+        elif self.current_site in ["SelectPlayers", "ShowPlayers"]:
             turn_back_option = "Cancel tournament creation -> return to Tournament Menu"
 
         if len(self.options) == 0 or title_only:

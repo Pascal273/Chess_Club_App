@@ -96,6 +96,7 @@ def turn_back_to(current_class_name: str):
     elif current_class_name in [
         "NewTournament",
         "SelectPlayers",
+        "ShowPlayers",
         "LoadTournament",
         "DeleteTournament"
     ]:
@@ -151,7 +152,7 @@ def valid_rating(number_string):
         return False
 
 
-def valid_id(number_string):
+def valid_int(number_string):
     """Checks if number is a valid id, int > 1
            and returns False or True"""
 
@@ -162,5 +163,4 @@ def valid_id(number_string):
             return False
 
     except ValueError:
-        print("\n                     It has to be a positive number!")
         return False

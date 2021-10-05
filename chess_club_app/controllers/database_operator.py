@@ -1,6 +1,7 @@
 from tinydb import Query
 
 from chess_club_app.models.player import Player
+from chess_club_app.models.tournament import Tournament
 from chess_club_app.models.database import Database
 
 
@@ -17,7 +18,12 @@ class DatabaseOperator:
         """Player gets serialized and saved in database"""
 
         serialized_player = Player(
-            first_name, last_name, birth_date, sex, rating).create()
+            first_name=first_name,
+            last_name=last_name,
+            birth_date=birth_date,
+            sex=sex,
+            rating=rating
+        ).create()
 
         self.database.players_table.insert(serialized_player)
 
@@ -60,3 +66,30 @@ class DatabaseOperator:
 
     def delete_player(self, player_id):
         self.database.players_table.remove(doc_ids=[player_id])
+
+    # ------------------------------------------Tournament Operations---------------------------------------------------
+
+    def save_tournament(self,
+                        name,
+                        location,
+                        date,
+                        number_of_rounds,
+                        rounds,
+                        players,
+                        time_control,
+                        description
+                        ):
+        """Tournament gets serialized and saved in database"""
+
+        serialized_tournament = Tournament(
+            name=name,
+            location=location,
+            date=date,
+            number_of_rounds=number_of_rounds,
+            rounds=rounds,
+            players=players,
+            time_control=time_control,
+            description=description
+        ).create()
+
+        self.database.tournaments_table.insert(serialized_tournament)

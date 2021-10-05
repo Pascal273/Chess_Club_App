@@ -1,7 +1,7 @@
 from time import sleep
 
 from chess_club_app.controllers import menu_creator
-from chess_club_app.controllers import tools
+from chess_club_app.controllers import util
 from chess_club_app.controllers.database_operator import DatabaseOperator
 
 
@@ -22,8 +22,8 @@ class PlayerMenu:
     def player_main_menu(self):
         """Shows the player main menu"""
 
-        tools.cls()
-        tools.print_logo()
+        util.cls()
+        util.print_logo()
         menu = menu_creator.MenuScreen(
             self.title,
             self.options,
@@ -58,8 +58,8 @@ class AddNewPlayer:
     def enter_player_details(self):
         """ask user for the details of the new player"""
 
-        tools.cls()
-        tools.print_logo()
+        util.cls()
+        util.print_logo()
         self.menu.print_menu()
 
         while len(self.first_name) < 2:
@@ -70,15 +70,15 @@ class AddNewPlayer:
             self.last_name = input(
                 f"{self.spacer}What´s the players last name?:                 ").capitalize()
 
-        while not tools.valid_date(self.birth_date):
+        while not util.valid_date(self.birth_date):
             self.birth_date = input(
                 f"{self.spacer}What´s the players birth date? (DD.MM.YYYY)?:  ")
 
-        while not tools.valid_sex(self.sex):
+        while not util.valid_sex(self.sex):
             self.sex = input(
                 f"{self.spacer}What´s the players sex? (M/F):                 ").upper()
 
-        while not tools.valid_rating(self.rating):
+        while not util.valid_rating(self.rating):
             self.rating = input(
                 f"{self.spacer}What´s the players current rating?:            ")
 
@@ -90,16 +90,16 @@ class AddNewPlayer:
            If if user answers 'no' the player doesn't get saved.
         """
 
-        tools.cls()
-        tools.print_logo()
+        util.cls()
+        util.print_logo()
         menu = menu_creator.MenuScreen("Check and Approve")
         menu.print_menu()
 
         print(f"""
-                Name:             {self.first_name} {self.last_name}
-                Date of Birth:    {self.birth_date}
-                Sex:              {self.sex}
-                Rating:           {self.rating}
+                     Name:             {self.first_name} {self.last_name}
+                     Date of Birth:    {self.birth_date}
+                     Sex:              {self.sex}
+                     Rating:           {self.rating}
         """)
 
         if input(f"{self.spacer}Are details about the new player correct? (Y/N) "
@@ -124,8 +124,8 @@ class AddNewPlayer:
 
 
 class ShowAllPlayers:
-    """Displays all players incl. table their information.
-       No options will be displayed if 'show_options' is False"""
+    """Displays all players incl. table of their information,
+       sorted by a detail of the users choice"""
 
     def __init__(self):
         self.title = "Show all Players"
@@ -148,13 +148,13 @@ class ShowAllPlayers:
 
         self.all_players = DatabaseOperator().load_all_players()
 
-        tools.cls()
-        tools.print_logo()
+        util.cls()
+        util.print_logo()
         self.menu.print_menu()
         self.menu.user_action()
 
-        tools.cls()
-        tools.print_logo()
+        util.cls()
+        util.print_logo()
         self.menu_2.print_menu(title_only=True)
         self.show_all()
 
@@ -190,7 +190,7 @@ class ShowAllPlayers:
             print("\n                     No Players in Database!")
 
         for player in self.all_players:
-            print(tools.all_player_details(player))
+            print(util.all_player_details(player))
 
 
 class SearchPlayer:
@@ -218,8 +218,8 @@ class SearchPlayer:
     def show_options(self):
         """Displays the available Options"""
 
-        tools.cls()
-        tools.print_logo()
+        util.cls()
+        util.print_logo()
         self.menu.print_menu()
         self.menu.user_action()
 
@@ -243,8 +243,8 @@ class SearchPlayer:
 
     def search_for(self, dict_key):
 
-        tools.cls()
-        tools.print_logo()
+        util.cls()
+        util.print_logo()
         self.menu.print_menu(title_only=True)
         wanted_value = input(
             f"{self.spacer}The wanted {dict_key.title()}: ")
@@ -268,7 +268,7 @@ class SearchPlayer:
 
             elif len(matches) > 1:
                 for player in matches:
-                    print(tools.all_player_details(player))
+                    print(util.all_player_details(player))
 
                 id_num = ""
                 while not id_num.isnumeric():
@@ -294,10 +294,10 @@ class EditOrDelete:
         self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
         self.player_obj = player_obj
 
-        tools.cls()
-        tools.print_logo()
+        util.cls()
+        util.print_logo()
         self.menu.print_menu(title_only=True)
-        print(tools.all_player_details(self.player_obj))
+        print(util.all_player_details(self.player_obj))
         self.menu.print_menu(options_only=True)
         self.menu.user_action()
 
@@ -328,10 +328,10 @@ class EditPlayer:
         self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
         self.player_object = player_object
 
-        tools.cls()
-        tools.print_logo()
+        util.cls()
+        util.print_logo()
         self.menu.print_menu(title_only=True)
-        print(tools.all_player_details(self.player_object))
+        print(util.all_player_details(self.player_object))
         self.menu.print_menu(options_only=True)
         self.menu.user_action()
 
@@ -365,7 +365,7 @@ class EditPlayer:
 
     def update_birth_date(self):
         new_birth_date = ""
-        while not tools.valid_date(new_birth_date):
+        while not util.valid_date(new_birth_date):
             new_birth_date = input(f"{self.spacer}New Birth Date:  ").capitalize()
         db = DatabaseOperator()
         db.update_player(
@@ -379,7 +379,7 @@ class EditPlayer:
 
     def update_sex(self):
         new_sex = ""
-        while not tools.valid_sex(new_sex):
+        while not util.valid_sex(new_sex):
             new_sex = input(f"{self.spacer}New Sex:  ").upper()
         db = DatabaseOperator()
         db.update_player(
@@ -393,7 +393,7 @@ class EditPlayer:
 
     def update_rating(self):
         new_rating = "-1"
-        while not tools.valid_rating(new_rating):
+        while not util.valid_rating(new_rating):
             new_rating = input(f"{self.spacer}New Rating:  ")
         db = DatabaseOperator()
         db.update_player(
@@ -423,10 +423,10 @@ class DeletePlayer:
         self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
         self.player_object = player_object
 
-        tools.cls()
-        tools.print_logo()
+        util.cls()
+        util.print_logo()
         self.menu.print_menu(title_only=True)
-        print(tools.all_player_details(self.player_object))
+        print(util.all_player_details(self.player_object))
         self.menu.print_menu(options_only=True)
         self.menu.user_action()
 

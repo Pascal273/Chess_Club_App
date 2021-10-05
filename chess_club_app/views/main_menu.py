@@ -1,5 +1,5 @@
 import chess_club_app.controllers.menu_creator
-import chess_club_app.controllers.tools as tools
+import chess_club_app.controllers.util as tools
 
 from chess_club_app.views.player_menus import PlayerMenu
 from chess_club_app.views.tournament_menus import TournamentMenu
