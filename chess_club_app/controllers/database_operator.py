@@ -12,7 +12,7 @@ class DatabaseOperator:
         """DatabaseOperator constructor"""
 
         self.database = Database()
-        self.player = Query()
+        self.query = Query()
 
     def save_player(self, first_name, last_name, birth_date, sex, rating):
         """Player gets serialized and saved in database"""
@@ -38,7 +38,7 @@ class DatabaseOperator:
         """Loads all players matching a given key
            and returns a dict of all matches"""
 
-        results = self.database.players_table.search(self.player[filter_by] == key_word)
+        results = self.database.players_table.search(self.query[filter_by] == key_word)
         return results
 
     def player_by_id(self, player_id: int):
@@ -51,7 +51,7 @@ class DatabaseOperator:
     def update_player(self, player_id, key: str, new_value):
         """Update the value of a given key in the database """
 
-        self.database.players_table.update_player(
+        self.database.players_table.update(
             {key: new_value},
             doc_ids=[player_id]
         )
@@ -59,9 +59,9 @@ class DatabaseOperator:
     def update_all_matching_players(self, key: str, old_value: str, new_value: str):
         """Updates all matching entries in the player table"""
 
-        self.database.players_table.update_player(
+        self.database.players_table.update(
             {key: new_value},
-            self.player[key] == old_value
+            self.query[key] == old_value
         )
 
     def delete_player(self, player_id):
@@ -105,5 +105,29 @@ class DatabaseOperator:
         """Loads all tournaments matching a given key
            and returns a dict of all matches"""
 
-        results = self.database.tournaments_table.search(self.player[filter_by] == key_word)
+        results = self.database.tournaments_table.search(self.query[filter_by] == key_word)
         return results
+
+    def update_tournament(self, tournament_id, key: str, new_value):
+        """Update the value of a given key inside a tournament in the database
+
+        Args:
+            tournament_id: int - ID of the tournament
+            key: str - key that is supposed to be updated
+            new_value: any valid value for the given key to be updated
+        """
+
+        self.database.tournaments_table.update(
+            {key: new_value},
+            doc_ids=[tournament_id]
+        )
+
+    def tournament_by_id(self, tournament_id: int):
+        """Takes a player ID and returns
+           the matching Player as a player object"""
+
+        tournament = self.database.tournaments_table.get(doc_id=tournament_id)
+        return tournament
+
+    def delete_tournament(self, tournament_id):
+        self.database.tournaments_table.remove(doc_ids=[tournament_id])

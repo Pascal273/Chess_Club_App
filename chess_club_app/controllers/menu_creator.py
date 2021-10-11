@@ -7,7 +7,7 @@ class MenuScreen:
 
     Args:
          title = str
-         options = dict of options(str): classes(obj) or List of Options(str)
+         options = dict of options(str): classes(obj)
          current_site = self.__class__.__name__
          (returns the name of the class that called it)
 
@@ -19,7 +19,7 @@ class MenuScreen:
     def __init__(
             self,
             title: str = None,
-            options: dict or list = None,
+            options: dict = None,
             current_site: str = None):
 
         self.title = title

@@ -2,7 +2,7 @@ from time import sleep
 
 from chess_club_app.controllers import menu_creator
 from chess_club_app.controllers import util
-from chess_club_app.controllers import tournament_operator
+from chess_club_app.controllers.tournament_operator import TournamentOperator
 from chess_club_app.controllers.database_operator import DatabaseOperator as Db
 
 DEFAULT_ROUNDS = 4
@@ -18,7 +18,7 @@ class TournamentMenu:
         self.options = {
              "Create New Tournament": NewTournament,
              "Show Tournaments": ShowTournaments,
-             "Play Tournament": PlayTournament,
+             "Play Tournament": PlayTournamentMenu,
              "Edit Tournament": EditTournament,
              "Delete Tournament": DeleteTournament
         }
@@ -139,7 +139,8 @@ class NewTournament:
                    If if user answers 'no' the player doesn't get saved.
                 """
 
-        player_name_list = [p["first name"] + " " + p["last name"] for p in self.players]
+        ser_players = [Db().player_by_id(id_num) for id_num in self.players]
+        player_name_list = [p["first name"] + " " + p["last name"] for p in ser_players]
         names = "\n"
         for name in player_name_list:
             names += f"                                         {name}\n\n"
@@ -215,8 +216,8 @@ class SelectPlayers:
             if picked not in self.player_ids and picked in available_ids:
                 self.player_ids.append(picked)
 
-        participants = [Db().player_by_id(player_id) for player_id in self.player_ids]
-        return participants
+        # participants = [Db().player_by_id(player_id) for player_id in self.player_ids]
+        return self.player_ids
 
 
 class ShowPlayers:
@@ -287,6 +288,7 @@ class ShowPlayers:
 class ShowTournaments:
 
     def __init__(self):
+        self.spacer = "\n                     "
         self.title = "Show Tournaments"
         self.options = {
             "Show all Finished Tournaments": self.show_all_finished,
@@ -315,7 +317,7 @@ class ShowTournaments:
         menu = menu_creator.MenuScreen(
             title="Unfinished Tournaments",
             options={
-                "Edit a Tournament": EditTournament,
+                "Play a Tournament": PlayTournamentMenu,
                 "Delete a Tournament": DeleteTournament
             },
             current_site=self.__class__.__name__
@@ -326,14 +328,16 @@ class ShowTournaments:
         menu.print_menu(title_only=True)
 
         if len(unfinished_tournaments) == 0:
-            print("\n                     No Unfinished Tournaments in Database!")
+            print(f"{self.spacer}No Unfinished Tournaments in Database!")
+            sleep(3)
+            ShowTournaments()
 
         else:
             for tournament in unfinished_tournaments:
                 print(util.all_tournament_details(tournament))
 
-        menu.print_menu(options_only=True)
-        menu.user_action()
+            menu.print_menu(options_only=True)
+            menu.user_action()
 
     def show_all_finished(self):
 
@@ -354,7 +358,7 @@ class ShowTournaments:
         menu.print_menu(title_only=True)
 
         if len(finished_tournaments) == 0:
-            print("\n                     No Finished Tournaments in Database!")
+            print(f"{self.spacer}No Finished Tournaments in Database!")
 
         else:
             for tournament in finished_tournaments:
@@ -367,10 +371,74 @@ class ShowTournaments:
         pass
 
 
-class PlayTournament:
+class PlayTournamentMenu:
 
     def __init__(self):
+        self.spacer = "\n                     "
+        self.title = "Play Tournament"
+        self.options = {
+            "show Tournaments sort by ID": self.sort_by_id,
+            "Show Tournaments sort by date (latest -> oldest)": self.sort_by_date
+        }
+
+        self.unfinished_tournaments_serialized = TournamentOperator().tdb
+        self.unfinished_tournaments = [
+            t for t in self.unfinished_tournaments_serialized if len(t["rounds"]) < t["number of rounds"]]
+
+        self.menu = menu_creator.MenuScreen(
+            title=self.title,
+            options=self.options,
+            current_site=self.__class__.__name__
+        )
+
+        util.cls()
+        util.print_logo()
+        self.menu.print_menu()
+        self.menu.user_action()
+
+        util.cls()
+        util.print_logo()
+        self.menu.print_menu(title_only=True)
+        self.show_all()
+        self.user_choice()
+
+    def sort_by_id(self):
         pass
+
+    def sort_by_date(self):
+        """sort´s all unfinished tournaments by date"""
+        self.unfinished_tournaments = sorted(
+            self.unfinished_tournaments, key=lambda x: x.get('date'[0]), reverse=True)
+
+    def show_all(self):
+        """Displays all unfinished tournaments in the chosen order"""
+
+        if len(self.unfinished_tournaments) == 0:
+            print("\n                     No new or unfinished in Database!")
+
+        else:
+            for tournament in self.unfinished_tournaments:
+                print(util.all_tournament_details(tournament))
+
+    def user_choice(self):
+        """User has to pick a tournament by ID"""
+        available_ids = [str(t.doc_id) for t in self.unfinished_tournaments]
+
+        tournament_id = ""
+        while not util.valid_int(tournament_id) or tournament_id not in available_ids:
+            tournament_id = input(f"{self.spacer}Which tournament do you want to start? (Enter ID): ")
+
+        RunTournament(int(tournament_id))
+
+
+class RunTournament:
+
+    def __init__(self, tournament_id: int):
+        self.tournament = Db().tournament_by_id(tournament_id)
+        ser_players = [Db().player_by_id(id_num) for id_num in self.tournament["players"]]
+        self.players = sorted(ser_players, key=lambda x: x.get('rating'), reverse=True)
+        for player in self.players:
+            print(util.all_player_details(player))
 
 
 class EditTournament:
@@ -380,6 +448,31 @@ class EditTournament:
 
 
 class DeleteTournament:
+    """Tournament gets displayed and the User has to confirm
+    that he wants to delete the player from the database."""
 
-    def __init__(self):
-        pass
+    def __init__(self, tournament_object):
+        self.spacer = "\n                     "
+        self.title = "Delete Tournament"
+        self.options = {
+            f"Please confirm: Delete the player {tournament_object['name']} "
+            f"{tournament_object['date']} from the database!": self.delete
+        }
+        self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.tournament_object = tournament_object
+
+        util.cls()
+        util.print_logo()
+        self.menu.print_menu(title_only=True)
+        print(util.all_player_details(self.tournament_object))
+        self.menu.print_menu(options_only=True)
+        self.menu.user_action()
+
+    def delete(self):
+        """Deletes the Player, prints confirmation and
+           turns back to the search player menu."""
+        Db().delete_tournament(self.tournament_object.doc_id)
+        print(f"{self.spacer}The player: {self.tournament_object['first name']} "
+              f"{self.tournament_object['last name']} successfully deleted!")
+        sleep(2)
+        TournamentMenu()

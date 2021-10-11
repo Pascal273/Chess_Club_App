@@ -3,6 +3,7 @@ import datetime
 from chess_club_app.views import main_menu
 from chess_club_app.views import player_menus
 from chess_club_app.views import tournament_menus
+from chess_club_app.controllers.database_operator import DatabaseOperator as Db
 
 
 def print_logo():
@@ -121,7 +122,8 @@ def all_player_details(player):
 
 def all_tournament_details(tournament):
 
-    player_name_list = [p["first name"] + " " + p["last name"] for p in tournament["players"]]
+    ser_players = [Db().player_by_id(id_num) for id_num in tournament["players"]]
+    player_name_list = [p["first name"] + " " + p["last name"] for p in ser_players]
     names = "\n"
     for name in player_name_list:
         names += f"                                    {name}\n"
