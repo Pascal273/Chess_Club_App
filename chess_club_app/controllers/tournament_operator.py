@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from chess_club_app.controllers import util
 from chess_club_app.controllers.database_operator import DatabaseOperator as Db
 from chess_club_app.models.round import Round
 from chess_club_app.models.match import Match
@@ -18,10 +19,10 @@ class TournamentOperator:
         ser_players = [Db().player_by_id(id_num) for id_num in self.tournament["players"]]
         self.players = sorted(ser_players, key=lambda x: x.get('rating'), reverse=True)
 
-        self.players_with_score = [[p, 0] for p in self.players]
+        self.leaderboard = [[p, 0] for p in self.players]
 
         if self.get_completed_rounds_nr() > 0:
-            for ps in self.players_with_score:
+            for ps in self.leaderboard:
                 for r in self.get_completed_rounds():
                     for match in r["matches"]:
                         for ps_matches in match:
@@ -76,8 +77,8 @@ class TournamentOperator:
         """Takes the sorted list 'players_with_score' sorted by rating, splits it in upper and lower half
         and best player in the upper half is paired with the best player in the lower half, and so on"""
 
-        upper_half = self.players_with_score[:len(self.players_with_score) // 2]
-        lower_half = self.players_with_score[len(self.players_with_score) // 2:]
+        upper_half = self.leaderboard[:len(self.leaderboard) // 2]
+        lower_half = self.leaderboard[len(self.leaderboard) // 2:]
 
         played_already = []
         if self.rounds[-1]["matches"]:
@@ -112,7 +113,7 @@ class TournamentOperator:
         # Creates a list of new pairings from the sorted list (players_with_score)
         # but if a pairing occurred already (in pairings_before) it takes the next possible player
         # that hasn't matched with the first one already.
-        sorted_players = self.players_with_score.copy()
+        sorted_players = self.leaderboard.copy()
         new_pairings = []
         count = 0
         tries = -1
@@ -129,11 +130,11 @@ class TournamentOperator:
 
             # If the current sorted list doesn't any more new pairings, it will be reordered with each new attempt
             # by switching first the last two, and then always one position earlier in the list.
-            if count > len(self.players_with_score):
+            if count > len(self.leaderboard):
                 tries -= 1
                 count = 0
                 new_pairings = []
-                sorted_players = self.players_with_score.copy()
+                sorted_players = self.leaderboard.copy()
                 sorted_players[tries], sorted_players[tries - 1] = sorted_players[tries - 1], sorted_players[tries]
             count += 1
 
@@ -149,18 +150,18 @@ class TournamentOperator:
         The updated list will be sorted by the score, if multiple players have the same score
         they will get sorted according to rank."""
 
-        new_players_with_score = []
+        last_leaderboard = []
         for match in self.rounds[-1]["matches"]:
             for ps in match:
-                new_players_with_score.append(ps)
+                last_leaderboard.append(ps)
 
-        for ps_old in self.players_with_score:
-            for ps_new in new_players_with_score:
+        for ps_old in self.leaderboard:
+            for ps_new in last_leaderboard:
                 if ps_old[0] == ps_new[0]:
                     ps_old[1] += ps_new[1]
 
-        self.players_with_score = sorted(
-            self.players_with_score,
+        self.leaderboard = sorted(
+            self.leaderboard,
             key=lambda x: (x[1], x[0].get('rating')),
             reverse=True
         )
@@ -191,7 +192,7 @@ class TournamentOperator:
     def save_finished_round(self):
         """Adds an End time to the current round and saves it in the Database. """
 
-        self.rounds[-1]["end time"] = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+        self.rounds[-1]["end time"] = datetime.now().strftime("%d.%m.%Y, %H:%M:%S")
         Db().update_tournament(
             tournament_id=self.tournament_id,
             key="rounds",
@@ -199,6 +200,17 @@ class TournamentOperator:
         )
         if self.get_completed_rounds_nr() < self.rounds_to_play:
             self.rounds.append(self.new_round())
+        else:
+            t_start_date = self.tournament["date"][0]
+            t_end_date = datetime.today().strftime("%d.%m.%Y")
+            if t_start_date != t_end_date:
+                date = util.date_range(t_start_date, t_end_date)
+
+                Db().update_tournament(
+                    tournament_id=self.tournament_id,
+                    key="date",
+                    new_value=date
+                )
 
     def new_round(self):
         """Creates a new Round with an empty list of matches and an empty end datetime string"""
@@ -206,7 +218,12 @@ class TournamentOperator:
         new_round = Round(
             round_name=f"{ROUND_NAME} {self.get_current_round_number() + 1}",
             matches=[],
-            start_date_time=datetime.now().strftime("%d/%m/%Y, %H:%M:%S"),
+            start_date_time=datetime.now().strftime("%d.%m.%Y, %H:%M:%S"),
             end_date_time=""
         ).create()
         return new_round
+
+    def get_leaderboard(self):
+        """Returns the leaderboard"""
+
+        return self.leaderboard

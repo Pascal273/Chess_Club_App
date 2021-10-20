@@ -99,8 +99,9 @@ def turn_back_to(current_class_name: str):
         "SelectPlayers",
         "ShowPlayers",
         "ShowTournaments",
-        "PlayTournament",
-        "DeleteTournament"
+        "PlayTournamentMenu",
+        "DeleteTournament",
+        "RunTournament"
     ]:
         tournament_menus.TournamentMenu()
 
@@ -135,7 +136,7 @@ def all_tournament_details(tournament):
 
     if len(tournament["rounds"]) == 0:
         rounds = "No rounds played"
-    # TODO - display round results
+
     else:
         rounds = ""
         for r in tournament["rounds"]:

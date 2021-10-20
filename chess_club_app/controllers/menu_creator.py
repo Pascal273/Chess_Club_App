@@ -75,8 +75,9 @@ class MenuScreen:
         elif self.current_site in [
             "NewTournament",
             "ShowTournaments",
-            "PlayTournament",
-            "DeleteTournament"
+            "PlayTournamentMenu",
+            "DeleteTournament",
+            "Run Tournament"
         ]:
             turn_back_option = "Return to Tournament Menu"
 

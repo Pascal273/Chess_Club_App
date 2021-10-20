@@ -44,8 +44,6 @@ class NewTournament:
             title=self.title,
             current_site=self.__class__.__name__
         )
-        self.start_date = ""
-        self.end_date = ""
 
         self.name = ""
         self.location = ""
@@ -84,30 +82,16 @@ class NewTournament:
         while len(self.location) < 5:
             self.location = input(f"\n{self.spacer}What´s the location of the Tournament?: ").title()
 
-        # ------------------------------------------Enter Dates---------------------------------------------------------
+        # ------------------------------------------Enter Date----------------------------------------------------------
 
-        while not util.valid_date(self.start_date):
-            s_date = input(
+        while not util.valid_date(self.date):
+            date = input(
                 f"\n{self.spacer}What´s the start date of the Tournament? (DD.MM.YYYY)\n"
                 f"{self.spacer}(If it´s today you can type 'today'): ")
-            if s_date == "today":
-                self.start_date = util.date_today()
+            if date == "today":
+                self.date = util.date_today()
             else:
-                self.start_date = s_date
-# TODO second date question should come at the end of the tournament!
-        while not util.valid_date(self.end_date):
-            e_date = input(
-                f"\n{self.spacer}What´s the end date of the Tournament? (DD.MM.YYYY)\n"
-                f"{self.spacer}(If´s today you can type 'today'): ")
-            if e_date == "today":
-                self.end_date = util.date_today()
-            else:
-                self.end_date = e_date
-
-        if self.start_date == self.end_date:
-            self.date.append(self.start_date)
-        else:
-            self.date = util.date_range(self.start_date, self.end_date)
+                self.date = date
 
         # ------------------------------------------Enter Number of Rounds----------------------------------------------
 
@@ -440,7 +424,7 @@ class RunTournament:
 
         self.spacer = "\n                     "
         self.play_rounds()
-
+        self.show_leaderboard()
 
     def play_rounds(self):
         while self.tournament.get_completed_rounds_nr() < self.tournament.rounds_to_play:
@@ -477,6 +461,31 @@ class RunTournament:
                 player_2=p2,
                 winner=int(result)
             )
+
+    def show_leaderboard(self):
+        """Displays the leaderboard"""
+
+        spacer = "                     "
+        title = "Results"
+        options = {
+            "Return to Tournament Menu": TournamentMenu,
+            "Show Tournaments": ShowTournaments
+        }
+        menu = menu_creator.MenuScreen(
+            title=title,
+            options=options,
+            current_site="MainMenu"
+        )
+
+        leaderboard = self.tournament.get_leaderboard()
+
+        util.cls()
+        util.print_logo()
+        menu.print_menu(title_only=True)
+        for ps in leaderboard:
+            lb_row = f"{spacer}{ps[0]['first name']} {ps[0]['last name']} : {ps[1]}"
+            print(lb_row)
+
 
 
 class EditTournament:
