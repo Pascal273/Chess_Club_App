@@ -5,7 +5,7 @@ class Match:
         Args:
             player_1: player object
             player_2: player object
-            winner: int
+            winner: int -> 1 = player_1, 2 = player_2, 0 = Tie
     """
 
     def __init__(self, player_1: object, player_2: object, winner: int):

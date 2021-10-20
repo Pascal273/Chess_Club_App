@@ -359,6 +359,8 @@ class ShowTournaments:
 
         if len(finished_tournaments) == 0:
             print(f"{self.spacer}No Finished Tournaments in Database!")
+            sleep(3)
+            ShowTournaments()
 
         else:
             for tournament in finished_tournaments:
@@ -381,9 +383,9 @@ class PlayTournamentMenu:
             "Show Tournaments sort by date (latest -> oldest)": self.sort_by_date
         }
 
-        self.unfinished_tournaments_serialized = TournamentOperator().tdb
+        self.tournaments_serialized = Db().database.tournaments_table
         self.unfinished_tournaments = [
-            t for t in self.unfinished_tournaments_serialized if len(t["rounds"]) < t["number of rounds"]]
+            t for t in self.tournaments_serialized if len(t["rounds"]) < t["number of rounds"]]
 
         self.menu = menu_creator.MenuScreen(
             title=self.title,
@@ -434,11 +436,47 @@ class PlayTournamentMenu:
 class RunTournament:
 
     def __init__(self, tournament_id: int):
-        self.tournament = Db().tournament_by_id(tournament_id)
-        ser_players = [Db().player_by_id(id_num) for id_num in self.tournament["players"]]
-        self.players = sorted(ser_players, key=lambda x: x.get('rating'), reverse=True)
-        for player in self.players:
-            print(util.all_player_details(player))
+        self.tournament = TournamentOperator(tournament_id)
+
+        self.spacer = "\n                     "
+        self.play_rounds()
+
+
+    def play_rounds(self):
+        while self.tournament.get_completed_rounds_nr() < self.tournament.rounds_to_play:
+            title = f"Playing Round {self.tournament.get_current_round_number()}"
+            menu = menu_creator.MenuScreen(title)
+            util.cls()
+            util.print_logo()
+            menu.print_menu()
+
+            self.current_round()
+            self.tournament.update_scores()
+            self.tournament.save_finished_round()
+
+    def current_round(self):
+
+        if self.tournament.get_current_round_number() == 1:
+            pairs = self.tournament.first_pairing()
+        else:
+            pairs = self.tournament.next_pairing()
+
+        for pair in pairs:
+            p1 = pair[0][0]
+            p2 = pair[1][0]
+
+            print(f"{self.spacer}---Match {self.tournament.get_current_match_number()}---")
+            print(f"{self.spacer}{p1['first name']} {p1['last name']} vs {p2['first name']} {p2['last name']}")
+
+            result = ""
+            while result not in ["0", "1", "2"]:
+                result = input(f"{self.spacer}Winner? (P1 = 1, P2 = 2, Tie = 0): ")
+
+            self.tournament.save_match(
+                player_1=p1,
+                player_2=p2,
+                winner=int(result)
+            )
 
 
 class EditTournament:
@@ -455,7 +493,7 @@ class DeleteTournament:
         self.spacer = "\n                     "
         self.title = "Delete Tournament"
         self.options = {
-            f"Please confirm: Delete the player {tournament_object['name']} "
+            f"Please confirm: Delete the tournament {tournament_object['name']} "
             f"{tournament_object['date']} from the database!": self.delete
         }
         self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
@@ -464,7 +502,7 @@ class DeleteTournament:
         util.cls()
         util.print_logo()
         self.menu.print_menu(title_only=True)
-        print(util.all_player_details(self.tournament_object))
+        print(util.all_tournament_details(self.tournament_object))
         self.menu.print_menu(options_only=True)
         self.menu.user_action()
 
@@ -472,7 +510,6 @@ class DeleteTournament:
         """Deletes the Player, prints confirmation and
            turns back to the search player menu."""
         Db().delete_tournament(self.tournament_object.doc_id)
-        print(f"{self.spacer}The player: {self.tournament_object['first name']} "
-              f"{self.tournament_object['last name']} successfully deleted!")
+        print(f"{self.spacer}The player: {self.tournament_object['name']} successfully deleted!")
         sleep(2)
         TournamentMenu()

@@ -61,7 +61,7 @@ def valid_menu_choice(answer, opt_num):
     try:
         if answer == "":
             return False
-        elif int(answer) > opt_num:
+        elif int(answer) >= opt_num:
             return False
         else:
             return True
@@ -137,7 +137,17 @@ def all_tournament_details(tournament):
         rounds = "No rounds played"
     # TODO - display round results
     else:
-        rounds = "Display round results"
+        rounds = ""
+        for r in tournament["rounds"]:
+            each_round = f"\n\n                         {r['name']}:\n"
+            rounds += each_round
+            for match in r["matches"]:
+                each_match = f"""
+                            {match[0][0]['first name'] + ' ' + match[0][0]['last name']
+                            + ' vs ' + match[1][0]['first name'] + ' ' + match[1][0]['last name']
+                            + ' | ' + str(match[0][1]) + ' : ' + str(match[1][1])}
+            """
+                rounds += each_match
 
     tournament_details = (f"""
                      ID:            {tournament.doc_id}
