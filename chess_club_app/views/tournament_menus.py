@@ -18,9 +18,7 @@ class TournamentMenu:
         self.options = {
              "Create New Tournament": NewTournament,
              "Show Tournaments": ShowTournaments,
-             "Play Tournament": PlayTournamentMenu,
-             "Edit Tournament": EditTournament,
-             "Delete Tournament": DeleteTournament
+             "Play Tournament": PlayTournamentMenu
         }
         util.cls()
         util.print_logo()
@@ -304,6 +302,7 @@ class ShowTournaments:
             title="Unfinished Tournaments",
             options={
                 "Play a Tournament": PlayTournamentMenu,
+                "Edit a Tournament": EditTournament,
                 "Delete a Tournament": DeleteTournament
             },
             current_site=self.__class__.__name__
@@ -495,34 +494,109 @@ class RunTournament:
 class EditTournament:
 
     def __init__(self):
-        pass
+        self.spacer = "\n                     "
+        self.title = "Tournament Editor"
+        self.options = {
+            "Change Name": self.update_name,
+            "Change Location": self.update_location,
+            "Change Start Date": self.update_start_date,
+            "Change Description": self.update_description
+        }
+        self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.db = Db()
+
+        print("\n\n")
+        self.menu.print_menu(title_only=True)
+
+        tournament_id = ""
+        while not util.valid_tournament_id(tournament_id):
+            tournament_id = input(f"\n{self.spacer}Enter ID:  ")
+        self.tournament_id = int(tournament_id)
+
+        self.menu.print_menu(options_only=True)
+        self.menu.user_action()
+
+        TournamentMenu()
+
+    def update_name(self):
+        new_name = ""
+        while len(new_name) < 3:
+            new_name = input(f"{self.spacer}New Tournament Name:  ").capitalize()
+        self.db.update_tournament(
+            tournament_id=self.tournament_id,
+            key="name",
+            new_value=new_name
+        )
+        print(f"{self.spacer}The Tournaments name has been changed to {new_name}!")
+        sleep(2)
+
+    def update_location(self):
+        new_location = ""
+        while len(new_location) < 3:
+            new_location = input(f"{self.spacer}New Tournament Name:  ").title()
+        self.db.update_tournament(
+            tournament_id=self.tournament_id,
+            key="location",
+            new_value=new_location
+        )
+        print(f"{self.spacer}The Tournaments location has been changed to {new_location}!")
+        sleep(2)
+
+    def update_start_date(self):
+        new_start_date = ""
+        while not util.valid_date(new_start_date):
+            new_start_date = input(f"{self.spacer}New Start Date (DD.MM.YYYY):  ")
+        dates = self.db.tournament_by_id(self.tournament_id)["date"]
+        dates[0] = new_start_date
+
+        self.db.update_tournament(
+            tournament_id=self.tournament_id,
+            key="date",
+            new_value=dates
+        )
+        print(f"{self.spacer}The Tournaments Start Date has been changed to {new_start_date}!")
+        sleep(2)
+
+    def update_description(self):
+        new_description = ""
+        while len(new_description) < 3:
+            new_description = input(f"{self.spacer}New Description:  ").capitalize()
+        self.db.update_tournament(
+            tournament_id=self.tournament_id,
+            key="description",
+            new_value=new_description
+        )
+        print(f"{self.spacer}The Tournaments description has been changed to {new_description}!")
+        sleep(2)
 
 
 class DeleteTournament:
     """Tournament gets displayed and the User has to confirm
     that he wants to delete the player from the database."""
 
-    def __init__(self, tournament_object):
+    def __init__(self):
         self.spacer = "\n                     "
         self.title = "Delete Tournament"
         self.options = {
-            f"Please confirm: Delete the tournament {tournament_object['name']} "
-            f"{tournament_object['date']} from the database!": self.delete
+            "Delete Tournament": self.delete
         }
         self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
-        self.tournament_object = tournament_object
 
-        util.cls()
-        util.print_logo()
+        print("\n\n")
         self.menu.print_menu(title_only=True)
-        print(util.all_tournament_details(self.tournament_object))
+
+        tournament_id = ""
+        while not util.valid_tournament_id(tournament_id):
+            tournament_id = input(f"\n{self.spacer}Enter ID:  ")
+        self.tournament_id = int(tournament_id)
+
         self.menu.print_menu(options_only=True)
         self.menu.user_action()
 
     def delete(self):
         """Deletes the Player, prints confirmation and
            turns back to the search player menu."""
-        Db().delete_tournament(self.tournament_object.doc_id)
-        print(f"{self.spacer}The player: {self.tournament_object['name']} successfully deleted!")
+        Db().delete_tournament(self.tournament_id)
+        print(f"{self.spacer}The Tournament: {Db().tournament_by_id(self.tournament_id)['name']} was deleted!")
         sleep(2)
         TournamentMenu()

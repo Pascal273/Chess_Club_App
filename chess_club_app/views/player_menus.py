@@ -438,6 +438,6 @@ class DeletePlayer:
            turns back to the search player menu."""
         DatabaseOperator().delete_player(self.player_object.doc_id)
         print(f"{self.spacer}The player: {self.player_object['first name']} "
-              f"{self.player_object['last name']} successfully deleted!")
+              f"{self.player_object['last name']} was deleted!")
         sleep(2)
         SearchPlayer()

@@ -268,3 +268,17 @@ def valid_player_number(player_num: str, number_of_rounds: int):
     except ValueError:
         return False
 
+
+def valid_tournament_id(tournament_id: str):
+    all_tournament_ids = [t.doc_id for t in Db().database.tournaments_table.all() if not t["deleted"]]
+
+    try:
+        number = int(tournament_id)
+        if number in all_tournament_ids:
+            return True
+
+        else:
+            return False
+
+    except ValueError:
+        return False
