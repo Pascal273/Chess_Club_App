@@ -1,5 +1,6 @@
 import os
 import datetime
+
 from chess_club_app.views import main_menu
 from chess_club_app.views import player_menus
 from chess_club_app.views import tournament_menus
@@ -122,6 +123,8 @@ def all_player_details(player):
 
 
 def all_tournament_details(tournament):
+    """Takes a tournament object and returns all
+    relevant Details in a printable table"""
 
     ser_players = [Db().player_by_id(id_num) for id_num in tournament["players"]]
     player_name_list = [p["first name"] + " " + p["last name"] for p in ser_players]
@@ -150,6 +153,11 @@ def all_tournament_details(tournament):
             """
                 rounds += each_match
 
+    if not tournament["leaderboard"]:
+        leaderboard = "No leader board available"
+    else:
+        leaderboard = readable_leaderboard(tournament["leaderboard"])
+
     tournament_details = (f"""
                      ID:            {tournament.doc_id}
                      Name:          {tournament["name"]}
@@ -160,9 +168,36 @@ def all_tournament_details(tournament):
                      Participants:  {names}
                      Description:   {tournament["description"]}\n
                      Rounds:        {rounds}
+                     Leaderboard:   {leaderboard}
         """)
 
     return tournament_details
+
+
+def readable_leaderboard(leaderboard: list):
+    """Takes a sorted leaderboard and returns all
+    players with their scores in a printable table
+
+    Args:
+        leaderboard: lists[player obj, score] in a list
+    """
+
+    spacer = "              "
+    head = ["Pos.", "Name", "Score"]
+    format_row = "{}{:<8}{:<20}{:<8}"
+    format_head = format_row.format(spacer, *head)
+
+    rows = []
+    for (rank, ps) in enumerate(leaderboard, start=1):
+        raw_row = [str(rank), f"{ps[0]['first name']} {ps[0]['last name']}", str(ps[1])]
+        rows.append(raw_row)
+
+    format_rows = f"\n\n{spacer}{format_head}\n"
+    for row in rows:
+        f_row = spacer + format_row.format(spacer, *row)
+        format_rows += f"\n{f_row}"
+
+    return format_rows
 
 
 def valid_date(date_text):
@@ -189,7 +224,7 @@ def valid_rating(number_string):
        and returns False or True"""
 
     try:
-        if float(number_string) >= 0:
+        if int(number_string) >= 0:
             return True
         else:
             return False
@@ -211,3 +246,25 @@ def valid_int(number_string):
 
     except ValueError:
         return False
+
+
+def valid_player_number(player_num: str, number_of_rounds: int):
+    """Checks if a number-string is valid for a number of players in a tournament"""
+
+    available_players = len(Db().database.players_table)
+
+    try:
+        number = int(player_num)
+        if number >= number_of_rounds + 1 and number % 2 == 0:
+            return True
+
+        elif number > available_players:
+            print(f"\n                     Only {available_players} Players in database!")
+            return False
+
+        else:
+            return False
+
+    except ValueError:
+        return False
+

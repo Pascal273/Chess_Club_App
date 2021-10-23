@@ -46,7 +46,7 @@ class AddNewPlayer:
         self.last_name = ""
         self.birth_date = ""
         self.sex = ""
-        self.rating = "-1"
+        self.rating = -1
 
         self.menu = menu_creator.MenuScreen(
             title=self.title,
@@ -81,6 +81,7 @@ class AddNewPlayer:
         while not util.valid_rating(self.rating):
             self.rating = input(
                 f"{self.spacer}What´s the players current rating?:            ")
+            self.rating = int(self.rating)
 
     def check_details(self):
         """
@@ -103,7 +104,7 @@ class AddNewPlayer:
         """)
 
         if input(f"{self.spacer}Are details about the new player correct? (Y/N) "
-                 ).lower() == "y":
+                 ).lower() or "y" == "y":
             self.save_player()
             print(f"{self.spacer}{self.first_name} {self.last_name} added to the Database")
             sleep(3)
@@ -393,9 +394,10 @@ class EditPlayer:
         SearchPlayer()
 
     def update_rating(self):
-        new_rating = "-1"
+        new_rating = -1
         while not util.valid_rating(new_rating):
             new_rating = input(f"{self.spacer}New Rating:  ")
+        new_rating = int(new_rating)
         db = DatabaseOperator()
         db.update_player(
             player_id=self.player_object.doc_id,

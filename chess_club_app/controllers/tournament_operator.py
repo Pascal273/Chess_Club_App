@@ -19,15 +19,10 @@ class TournamentOperator:
         ser_players = [Db().player_by_id(id_num) for id_num in self.tournament["players"]]
         self.players = sorted(ser_players, key=lambda x: x.get('rating'), reverse=True)
 
-        self.leaderboard = [[p, 0] for p in self.players]
-
-        if self.get_completed_rounds_nr() > 0:
-            for ps in self.leaderboard:
-                for r in self.get_completed_rounds():
-                    for match in r["matches"]:
-                        for ps_matches in match:
-                            if ps[0] == ps_matches[0]:
-                                ps[1] += ps_matches[1]
+        if self.tournament["leaderboard"]:
+            self.leaderboard = self.tournament["leaderboard"]
+        else:
+            self.leaderboard = [[p, 0] for p in self.players]
 
         self.matches_per_round = len(self.players) // 2
 
@@ -128,7 +123,7 @@ class TournamentOperator:
                     new_pairings.append(pair)
                     break
 
-            # If the current sorted list doesn't any more new pairings, it will be reordered with each new attempt
+            # If the current sorted list can't find any more new pairings, it will be reordered with each new attempt
             # by switching first the last two, and then always one position earlier in the list.
             if count > len(self.leaderboard):
                 tries -= 1
@@ -136,6 +131,7 @@ class TournamentOperator:
                 new_pairings = []
                 sorted_players = self.leaderboard.copy()
                 sorted_players[tries], sorted_players[tries - 1] = sorted_players[tries - 1], sorted_players[tries]
+
             count += 1
 
         # Adds only the pairs to the current round matches that wasn't done playing already
@@ -198,6 +194,13 @@ class TournamentOperator:
             key="rounds",
             new_value=self.rounds
         )
+
+        Db().update_tournament(
+            tournament_id=self.tournament_id,
+            key="leaderboard",
+            new_value=self.leaderboard
+        )
+
         if self.get_completed_rounds_nr() < self.rounds_to_play:
             self.rounds.append(self.new_round())
         else:

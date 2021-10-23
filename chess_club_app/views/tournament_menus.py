@@ -53,17 +53,12 @@ class NewTournament:
         self.players = []
         self.time_control = ""
         self.description = ""
+        self.leaderboard = []
 
         self.saved_players = len(Db().load_all_players())
 
-        if self.saved_players >= 8:
-            self.enter_data()
-            self.confirm()
-        else:
-            print(f"\n{self.spacer}Not enough player in Database! Please add more!\n"
-                  f"{self.spacer}(Min. 8 are required for a tournament)")
-            sleep(3)
-            TournamentMenu()
+        self.enter_data()
+        self.confirm()
 
     def enter_data(self):
         """lets the user enter all tournament data"""
@@ -84,21 +79,15 @@ class NewTournament:
 
         # ------------------------------------------Enter Date----------------------------------------------------------
 
-        while not util.valid_date(self.date):
+        date = ""
+        while not util.valid_date(date):
             date = input(
                 f"\n{self.spacer}What´s the start date of the Tournament? (DD.MM.YYYY)\n"
                 f"{self.spacer}(If it´s today you can type 'today'): ")
             if date == "today":
-                self.date = util.date_today()
-            else:
-                self.date = date
+                date = util.date_today()
 
-        # ------------------------------------------Enter Number of Rounds----------------------------------------------
-
-        while not util.valid_int(self.number_of_rounds):
-            self.number_of_rounds = input(
-                f"\n{self.spacer}Number of rounds to play (default is {DEFAULT_ROUNDS}): ") or DEFAULT_ROUNDS
-        self.number_of_rounds = int(self.number_of_rounds)
+        self.date.append(date)
 
         # ------------------------------------------Enter Time Control--------------------------------------------------
 
@@ -111,9 +100,22 @@ class NewTournament:
         while len(self.description) < 1:
             self.description = input(f"\n{self.spacer}Enter a Description: ").capitalize()
 
-        # ------------------------------------------Enter Select Players------------------------------------------------
+        # ------------------------------------------Enter Number of Rounds----------------------------------------------
 
-        self.players = SelectPlayers(self.number_of_rounds).selection()
+        while not util.valid_int(self.number_of_rounds, ):
+            self.number_of_rounds = input(
+                f"\n{self.spacer}Number of rounds to play (default is {DEFAULT_ROUNDS}): ") or DEFAULT_ROUNDS
+        self.number_of_rounds = int(self.number_of_rounds)
+
+        # --------------------------------------------Select Players----------------------------------------------------
+
+        number_of_players = ""
+        while not util.valid_player_number(number_of_players, self.number_of_rounds):
+            number_of_players = input(
+                f"\n{self.spacer}Number of participants (min. {self.number_of_rounds + 2}): ")
+        number_of_players = int(number_of_players)
+
+        self.players = SelectPlayers(number_of_players).selection()
 
     def confirm(self):
         """
@@ -137,7 +139,7 @@ class NewTournament:
         print(f"""
                      Tournament Name:    {self.name}\n
                      Location:           {self.location}\n
-                     Date(s):            {self.date}\n
+                     Date(s):            {self.date[0]}\n
                      Nr. of Rounds:      {self.number_of_rounds}\n
                      Time Control:       {self.time_control}\n
                      Participants:       {names}\n
@@ -147,7 +149,7 @@ class NewTournament:
         if input(f"{self.spacer}Are details about the new tournament correct? (Y/N) "
                  ).lower() == "y":
             self.save_tournament()
-            print(f"{self.spacer}{self.name} - Tournament added to the Database")
+            print(f"{self.spacer}{self.name} - got saved in the Database")
             sleep(3)
             TournamentMenu()
         else:
@@ -164,7 +166,8 @@ class NewTournament:
             rounds=self.rounds,
             players=self.players,
             time_control=self.time_control,
-            description=self.description
+            description=self.description,
+            leaderboard=self.leaderboard
         )
 
 
@@ -172,12 +175,12 @@ class SelectPlayers:
     """lets the user select a number of players, matching the number of rounds
        and returns them in a list"""
 
-    def __init__(self, number_of_rounds: int):
+    def __init__(self, number_of_players: int):
         """Select Players Constructor"""
         self.spacer = "\n                     "
 
         self.player_ids = []
-        self.number_of_participants = number_of_rounds * 2
+        self.number_of_participants = number_of_players
 
         self.show_players = ShowPlayers()
         self.show_players.order()   # user pick´s the order the players will be displayed
@@ -200,7 +203,6 @@ class SelectPlayers:
             if picked not in self.player_ids and picked in available_ids:
                 self.player_ids.append(picked)
 
-        # participants = [Db().player_by_id(player_id) for player_id in self.player_ids]
         return self.player_ids
 
 
@@ -400,7 +402,9 @@ class PlayTournamentMenu:
         """Displays all unfinished tournaments in the chosen order"""
 
         if len(self.unfinished_tournaments) == 0:
-            print("\n                     No new or unfinished in Database!")
+            print("\n                     No Tournaments found. Add a new Tournament first!")
+            sleep(3)
+            TournamentMenu()
 
         else:
             for tournament in self.unfinished_tournaments:
@@ -465,7 +469,6 @@ class RunTournament:
     def show_leaderboard(self):
         """Displays the leaderboard"""
 
-        spacer = "                     "
         title = "Results"
         options = {
             "Return to Tournament Menu": TournamentMenu,
@@ -482,10 +485,11 @@ class RunTournament:
         util.cls()
         util.print_logo()
         menu.print_menu(title_only=True)
-        for ps in leaderboard:
-            lb_row = f"{spacer}{ps[0]['first name']} {ps[0]['last name']} : {ps[1]}"
-            print(lb_row)
 
+        print(util.readable_leaderboard(leaderboard))
+
+        menu.print_menu(options_only=True)
+        menu.user_action()
 
 
 class EditTournament:

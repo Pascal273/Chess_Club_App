@@ -10,7 +10,8 @@ class Tournament:
             rounds: list,
             players: list,
             time_control: str,
-            description: str
+            description: str,
+            leaderboard: list
             ):
 
         """Tournament Constructor
@@ -24,6 +25,7 @@ class Tournament:
             players (list): list of participants
             time_control (str): bullet, blitz, or rapid
             description (str): description of the tournament
+            leaderboard (list): a list of lists, with a player obj and a score in each sub lists
         """
 
         self.name = name
@@ -34,6 +36,8 @@ class Tournament:
         self.players = players
         self.time_control = time_control
         self.description = description
+        self.leaderboard = leaderboard
+        self.deleted = False
 
     def create(self):
         """Creates and returns a new tournament"""
@@ -45,6 +49,8 @@ class Tournament:
             "rounds": self.rounds,
             "players": self.players,
             "time control": self.time_control,
-            "description": self.description
+            "description": self.description,
+            "leaderboard": self.leaderboard,
+            "deleted": self.deleted
         }
         return tournament

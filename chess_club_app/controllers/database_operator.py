@@ -22,7 +22,7 @@ class DatabaseOperator:
             last_name=last_name,
             birth_date=birth_date,
             sex=sex,
-            rating=rating
+            rating=rating,
         ).create()
 
         self.database.players_table.insert(serialized_player)
@@ -30,7 +30,7 @@ class DatabaseOperator:
     def load_all_players(self):
         """Loads all players and returns them in a list"""
 
-        all_players_serialized = self.database.players_table.all()
+        all_players_serialized = [p for p in self.database.players_table.all() if not p["deleted"]]
 
         return all_players_serialized
 
@@ -64,8 +64,14 @@ class DatabaseOperator:
             self.query[key] == old_value
         )
 
-    def delete_player(self, player_id):
+    def hard_delete_player(self, player_id: int):
         self.database.players_table.remove(doc_ids=[player_id])
+
+    def delete_player(self, player_id: int):
+        self.database.players_table.update(
+            {"deleted": True},
+            doc_ids=[player_id]
+        )
 
     # ------------------------------------------Tournament Operations---------------------------------------------------
 
@@ -77,7 +83,8 @@ class DatabaseOperator:
                         rounds,
                         players,
                         time_control,
-                        description
+                        description,
+                        leaderboard
                         ):
         """Tournament gets serialized and saved in database"""
 
@@ -89,7 +96,8 @@ class DatabaseOperator:
             rounds=rounds,
             players=players,
             time_control=time_control,
-            description=description
+            description=description,
+            leaderboard=leaderboard
         ).create()
 
         self.database.tournaments_table.insert(serialized_tournament)
@@ -97,7 +105,7 @@ class DatabaseOperator:
     def load_all_tournaments(self):
         """Loads all players and returns them in a list"""
 
-        all_tournaments_serialized = self.database.tournaments_table.all()
+        all_tournaments_serialized = [t for t in self.database.tournaments_table.all() if not t["deleted"]]
 
         return all_tournaments_serialized
 
@@ -129,5 +137,11 @@ class DatabaseOperator:
         tournament = self.database.tournaments_table.get(doc_id=tournament_id)
         return tournament
 
-    def delete_tournament(self, tournament_id):
+    def hard_delete_tournament(self, tournament_id):
         self.database.tournaments_table.remove(doc_ids=[tournament_id])
+
+    def delete_tournament(self, tournament_id: int):
+        self.database.tournaments_table.update(
+            {"deleted": True},
+            doc_ids=[tournament_id]
+        )
