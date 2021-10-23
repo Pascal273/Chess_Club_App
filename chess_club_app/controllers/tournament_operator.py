@@ -114,25 +114,36 @@ class TournamentOperator:
         tries = -1
 
         while len(sorted_players) > 0:
-            for i in range(1, len(sorted_players)):
-                player_a = sorted_players[0][0]
-                player_b = sorted_players[i][0]
+            try:
+                for i in range(1, len(sorted_players)):
+                    player_a = sorted_players[0][0]
+                    player_b = sorted_players[i][0]
 
-                if [player_a, player_b] not in pairings_before and [player_b, player_a] not in pairings_before:
-                    pair = [sorted_players.pop(0), sorted_players.pop(i-1)]
-                    new_pairings.append(pair)
-                    break
+                    if [player_a, player_b] not in pairings_before and [player_b, player_a] not in pairings_before:
+                        pair = [sorted_players.pop(0), sorted_players.pop(i-1)]
+                        new_pairings.append(pair)
+                        break
 
-            # If the current sorted list can't find any more new pairings, it will be reordered with each new attempt
-            # by switching first the last two, and then always one position earlier in the list.
-            if count > len(self.leaderboard):
-                tries -= 1
-                count = 0
-                new_pairings = []
+                # If the first loop couldn't find any more new pairings,
+                # The sorted_players list resets and switch two players with each new attempt
+                # by switching first the last two, and then always one position earlier in the list.
+                if count > len(self.leaderboard):
+                    tries -= 1
+                    count = 0
+                    new_pairings = []
+                    sorted_players = self.leaderboard.copy()
+                    sorted_players[tries], sorted_players[tries - 2] = sorted_players[tries - 2], sorted_players[tries]
+
+                count += 1
+
+            # If the second step still couldn't find a player and caused an IndexError,
+            # Tries will be negated and the sorted_players list resets,
+            # so players will switched from the beginning of the list instead
+            except IndexError:
                 sorted_players = self.leaderboard.copy()
-                sorted_players[tries], sorted_players[tries - 1] = sorted_players[tries - 1], sorted_players[tries]
-
-            count += 1
+                new_pairings = []
+                count = 0
+                tries *= -1
 
         # Adds only the pairs to the current round matches that wasn't done playing already
         pairings_current_round = [[pair[0], pair[1]] for pair in new_pairings
