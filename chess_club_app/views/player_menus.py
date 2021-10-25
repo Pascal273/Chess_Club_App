@@ -59,23 +59,23 @@ class AddNewPlayer:
 
         while len(self.first_name) < 2:
             self.first_name = input(
-                f"{self.spacer}What´s the players first name?:                ").capitalize()
+                f"{self.spacer}What´s the players first name?: ").capitalize()
 
         while len(self.last_name) < 2:
             self.last_name = input(
-                f"{self.spacer}What´s the players last name?:                 ").capitalize()
+                f"{self.spacer}What´s the players last name?: ").capitalize()
 
         while not utils.valid_date(self.birth_date):
             self.birth_date = input(
-                f"{self.spacer}What´s the players birth date? (DD.MM.YYYY)?:  ")
+                f"{self.spacer}What´s the players birth date? (DD.MM.YYYY)?: ")
 
         while not utils.valid_sex(self.sex):
             self.sex = input(
-                f"{self.spacer}What´s the players sex? (M/F):                 ").upper()
+                f"{self.spacer}What´s the players sex? (M/F): ").upper()
 
         while not utils.valid_rating(self.rating):
             self.rating = input(
-                f"{self.spacer}What´s the players current rating?:            ")
+                f"{self.spacer}What´s the players current rating?: ")
             self.rating = int(self.rating)
 
     def check_details(self):
@@ -97,10 +97,12 @@ class AddNewPlayer:
                      Rating:           {self.rating}
         """)
 
-        if input(f"{self.spacer}Are details about the new player correct? (Y/N) "
+        if input(f"{self.spacer}"
+                 f"Are all details of the new player correct? (Y/N) "
                  ).lower() or "y" == "y":
             self.save_player()
-            print(f"{self.spacer}{self.first_name} {self.last_name} added to the Database")
+            print(f"{self.spacer}{self.first_name} {self.last_name} "
+                  f"added to the Database")
             sleep(3)
             PlayerMenu()
         else:
@@ -130,14 +132,16 @@ class ShowAllPlayers:
             "Show all players sort by sex": self.sort_by_sex,
             "Show all players sort by rating": self.sort_by_rating,
         }
-        self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.menu = menu_creator.MenuScreen(
+            self.title, self.options, self.__class__.__name__)
 
         self.title_2 = "All Players"
         self.options_2 = {
             "Add a new player": AddNewPlayer,
             "Edit Player": SearchPlayer
         }
-        self.menu_2 = menu_creator.MenuScreen(self.title_2, self.options_2, self.__class__.__name__)
+        self.menu_2 = menu_creator.MenuScreen(
+            self.title_2, self.options_2, self.__class__.__name__)
 
         self.all_players = DatabaseOperator().load_all_players()
 
@@ -160,23 +164,28 @@ class ShowAllPlayers:
 
     def sort_by_first_name(self):
         """sort´s all players by first name"""
-        self.all_players = sorted(self.all_players, key=lambda x: x.get('first name'))
+        self.all_players = sorted(
+            self.all_players, key=lambda x: x.get('first name'))
 
     def sort_by_last_name(self):
         """sort´s all players by last name"""
-        self.all_players = sorted(self.all_players, key=lambda x: x.get('last name'))
+        self.all_players = sorted(
+            self.all_players, key=lambda x: x.get('last name'))
 
     def sort_by_birth_date(self):
         """sort´s all players by birth date"""
-        self.all_players = sorted(self.all_players, key=lambda x: x.get('birth date'))
+        self.all_players = sorted(
+            self.all_players, key=lambda x: x.get('birth date'))
 
     def sort_by_sex(self):
         """sort´s all players by sex"""
-        self.all_players = sorted(self.all_players, key=lambda x: x.get('sex'))
+        self.all_players = sorted(
+            self.all_players, key=lambda x: x.get('sex'))
 
     def sort_by_rating(self):
         """sort´s all players by rating from highest to lowest"""
-        self.all_players = sorted(self.all_players, key=lambda x: x.get('rating'), reverse=True)
+        self.all_players = sorted(
+            self.all_players, key=lambda x: x.get('rating'), reverse=True)
 
     def show_all(self):
         """Displays all players and a table of their details"""
@@ -207,7 +216,8 @@ class SearchPlayer:
             "Search for a Sex": self.search_sex,
             "Get player directly by ID": self.get_by_id
         }
-        self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.menu = menu_creator.MenuScreen(
+            self.title, self.options, self.__class__.__name__)
         self.show_options()
 
     def show_options(self):
@@ -256,10 +266,12 @@ class SearchPlayer:
                 SearchPlayer()
 
         else:
-            matches = DatabaseOperator().search_player(dict_key, wanted_value.capitalize())
+            matches = DatabaseOperator().search_player(
+                dict_key, wanted_value.capitalize())
 
             if len(matches) == 0:
-                print(f"{self.spacer}No Player with that {dict_key.title()} found!")
+                print(f"{self.spacer}"
+                      f"No Player with that {dict_key.title()} found!")
                 sleep(3)
                 SearchPlayer()
 
@@ -270,7 +282,8 @@ class SearchPlayer:
                 id_num = ""
                 while not id_num.isnumeric():
                     id_num = input(
-                        f"{self.spacer}Several matches found! Pick a player by ID!  ")
+                        f"{self.spacer}"
+                        f"Several matches found! Pick a player by ID!  ")
                 EditOrDelete(matches[int(id_num) - 1])
 
             else:
@@ -287,7 +300,8 @@ class EditOrDelete:
             "Edit Player": self.edit,
             "Delete Player": self.delete,
         }
-        self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.menu = menu_creator.MenuScreen(
+            self.title, self.options, self.__class__.__name__)
         self.player_obj = player_obj
 
         utils.cls()
@@ -323,7 +337,8 @@ class EditPlayer:
             "Change Rating": self.update_rating,
             "Delete the Player": self.open_delete_player
         }
-        self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.menu = menu_creator.MenuScreen(
+            self.title, self.options, self.__class__.__name__)
         self.player_object = player_object
 
         utils.cls()
@@ -338,7 +353,8 @@ class EditPlayer:
         and displays a confirmation."""
         new_first_name = ""
         while len(new_first_name) < 2:
-            new_first_name = input(f"{self.spacer}New First Name:  ").capitalize()
+            new_first_name = input(
+                f"{self.spacer}New First Name:  ").capitalize()
         db = DatabaseOperator()
         db.update_player(
             player_id=self.player_object.doc_id,
@@ -354,7 +370,8 @@ class EditPlayer:
         and displays a confirmation."""
         new_last_name = ""
         while len(new_last_name) < 2:
-            new_last_name = input(f"{self.spacer}New Last Name:  ").capitalize()
+            new_last_name = input(
+                f"{self.spacer}New Last Name:  ").capitalize()
         db = DatabaseOperator()
         db.update_player(
             player_id=self.player_object.doc_id,
@@ -370,7 +387,8 @@ class EditPlayer:
         and displays a confirmation."""
         new_birth_date = ""
         while not utils.valid_date(new_birth_date):
-            new_birth_date = input(f"{self.spacer}New Birth Date:  ").capitalize()
+            new_birth_date = input(
+                f"{self.spacer}New Birth Date:  ").capitalize()
         db = DatabaseOperator()
         db.update_player(
             player_id=self.player_object.doc_id,
@@ -431,7 +449,8 @@ class DeletePlayer:
             f"Please confirm: Delete the player {player_object['first name']} "
             f"{player_object['last name']} from the database!": self.delete
         }
-        self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.menu = menu_creator.MenuScreen(
+            self.title, self.options, self.__class__.__name__)
         self.player_object = player_object
 
         utils.cls()

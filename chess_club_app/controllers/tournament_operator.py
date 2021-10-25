@@ -9,13 +9,15 @@ ROUND_NAME = "Round"
 
 
 class TournamentOperator:
-    """The Tournament Operator, gets a Tournament object by doc_id and play's all the rounds and matches
-    no matter if the Tournament is new or if a number of rounds or matches was played already.
-    It will pair the players according to the swiss tournament system and allows no pairing to
-    occur twice.
+    """The Tournament Operator, gets a Tournament object by doc_id and play's
+    all the rounds and matches no matter if the Tournament is new or if a
+    number of rounds or matches was played already.
+    It will pair the players according to the swiss tournament system and
+    allows no pairing to occur twice.
 
     Args:
-        tournament_id (int): doc_id of the tournament object that is supposed to be played
+        tournament_id (int): doc_id of the tournament object that is supposed
+        to be played
     """
     def __init__(self, tournament_id: int):
         """Constructor for the Tournament operator"""
@@ -24,8 +26,10 @@ class TournamentOperator:
         self.tournament = Db().tournament_by_id(self.tournament_id)
 
         self.rounds = self.tournament["rounds"]
-        ser_players = [Db().player_by_id(id_num) for id_num in self.tournament["players"]]
-        self.players = sorted(ser_players, key=lambda x: x.get('rating'), reverse=True)
+        ser_players = [
+            Db().player_by_id(id_num) for id_num in self.tournament["players"]]
+        self.players = sorted(
+            ser_players, key=lambda x: x.get('rating'), reverse=True)
 
         if self.tournament["leaderboard"]:
             self.leaderboard = self.tournament["leaderboard"]
@@ -77,8 +81,10 @@ class TournamentOperator:
         return current_match_number
 
     def first_pairing(self):
-        """Takes the sorted list 'players_with_score' sorted by rating, splits it in upper and lower half
-        and best player in the upper half is paired with the best player in the lower half, and so on"""
+        """Takes the sorted list 'players_with_score' sorted by rating,
+        splits it in upper and lower half
+        and best player in the upper half is paired with the best player in
+        the lower half, and so on"""
 
         upper_half = self.leaderboard[:len(self.leaderboard) // 2]
         lower_half = self.leaderboard[len(self.leaderboard) // 2:]
@@ -89,32 +95,41 @@ class TournamentOperator:
                 for ps in match:
                     played_already.append(ps[0])
 
-        pairing = [[upper_half[m], lower_half[m]] for m in range(self.matches_per_round)
+        pairing = [[upper_half[m], lower_half[m]] for m
+                   in range(self.matches_per_round)
                    if upper_half[m][0] not in played_already]
 
         return pairing
 
     def next_pairing(self):
-        """Takes the list 'players_with_score' that is sorted by score and rank.
-        Player 1 vs. Player 2, Player 3 vs. player 4,... except two players had a match in that tournament already.
-        In that case a player gets matched with the next one in the order that didn't had a match with him already.
-        If a match was already saved in that round earlier it will get skipped!"""
+        """
+        Takes the list 'players_with_score' that is sorted by score and rank.
+        Player 1 vs. Player 2, Player 3 vs. player 4,... except two players had
+        a match in that tournament already.
+        In that case a player gets matched with the next one in the order that
+        didn't had a match with him already.
+        If a match was already saved in that round earlier it will get skipped!
+        """
 
-        # Creates a list of all pairings that have already occurred in this tournament.
+        # Creates a list of all pairings that have
+        # already occurred in this tournament.
         pairings_before = []
         for finished_round in self.rounds:
             for match in finished_round["matches"]:
                 pairings_before.append([match[0][0], match[1][0]])
 
-        # Creates a list of all players who have already played a match in the current round.
+        # Creates a list of all players who have already
+        # played a match in the current round.
         played_current_round = []
         if self.rounds[-1]["matches"]:
             for match in self.rounds[-1]["matches"]:
                 for ps in match:
                     played_current_round.append(ps[0])
 
-        # Creates a list of new pairings from the sorted list (players_with_score)
-        # but if a pairing occurred already (in pairings_before) it takes the next possible player
+        # Creates a list of new pairings from the sorted list
+        # (players_with_score)
+        # but if a pairing occurred already (in pairings_before)
+        # it takes the next possible player
         # that hasn't matched with the first one already.
         sorted_players = self.leaderboard.copy()
         new_pairings = []
@@ -127,24 +142,29 @@ class TournamentOperator:
                     player_a = sorted_players[0][0]
                     player_b = sorted_players[i][0]
 
-                    if [player_a, player_b] not in pairings_before and [player_b, player_a] not in pairings_before:
+                    if [player_a, player_b] not in pairings_before and \
+                            [player_b, player_a] not in pairings_before:
                         pair = [sorted_players.pop(0), sorted_players.pop(i-1)]
                         new_pairings.append(pair)
                         break
 
                 # If the first loop couldn't find any more new pairings,
-                # The sorted_players list resets and switch two players with each new attempt
-                # by switching first the last two, and then always one position earlier in the list.
+                # The sorted_players list resets and
+                # switch two players with each new attempt
+                # by switching first the last two
+                # and then always one position earlier in the list.
                 if count > len(self.leaderboard):
                     tries -= 1
                     count = 0
                     new_pairings = []
                     sorted_players = self.leaderboard.copy()
-                    sorted_players[tries], sorted_players[tries - 2] = sorted_players[tries - 2], sorted_players[tries]
+                    sorted_players[tries], sorted_players[tries - 2] = \
+                        sorted_players[tries - 2], sorted_players[tries]
 
                 count += 1
 
-            # If the second step still couldn't find a player and caused an IndexError,
+            # If the second step still couldn't find a
+            # player and caused an IndexError,
             # Tries will be negated and the sorted_players list resets,
             # so players will switched from the beginning of the list instead
             except IndexError:
@@ -153,17 +173,20 @@ class TournamentOperator:
                 count = 0
                 tries *= -1
 
-        # Adds only the pairs to the current round matches that wasn't done playing already
+        # Adds only the pairs to the current round matches
+        # that wasn't done playing already
         pairings_current_round = [[pair[0], pair[1]] for pair in new_pairings
                                   if pair[0][0] not in played_current_round]
 
         return pairings_current_round
 
     def update_scores(self):
-        """Gets the player-Score-lists from the current and (if there is one) the previous Rounds.
-        The Score of each player gets updated by adding the score of the current Round.
-        The updated list will be sorted by the score, if multiple players have the same score
-        they will get sorted according to rank."""
+        """Gets the player-Score-lists from the current and (if there is one)
+        the previous Rounds.
+        The Score of each player gets updated by adding the score of the
+        current Round.
+        The updated list will be sorted by the score, if multiple players have
+        the same score they will get sorted according to rank."""
 
         last_leaderboard = []
         for match in self.rounds[-1]["matches"]:
@@ -182,8 +205,10 @@ class TournamentOperator:
         )
 
     def save_match(self, player_1, player_2, winner):
-        """Takes two players and a winner and creates a match object by using the match model
-        and saves it in the current tournament by using the update tournament method
+        """Takes two players and a winner and creates a match object by using
+        the match model
+        and saves it in the current tournament by using the update tournament
+        method
 
         Args:
             player_1: player object
@@ -205,9 +230,12 @@ class TournamentOperator:
         )
 
     def save_finished_round(self):
-        """Adds an End time to the current round and saves it in the Database. """
+        """Adds an End time to the current round
+        and saves it in the Database. """
 
-        self.rounds[-1]["end time"] = datetime.now().strftime("%d.%m.%Y, %H:%M:%S")
+        self.rounds[-1]["end time"] = datetime.now().strftime(
+            "%d.%m.%Y, %H:%M:%S"
+        )
         Db().update_tournament(
             tournament_id=self.tournament_id,
             key="rounds",
@@ -235,8 +263,8 @@ class TournamentOperator:
                 )
 
     def new_round(self):
-        """Creates a new Round with an empty list of matches and an empty end datetime string"""
-
+        """Creates a new Round with an empty list of matches
+        and an empty end datetime string"""
         new_round = Round(
             round_name=f"{ROUND_NAME} {self.get_current_round_number() + 1}",
             matches=[],

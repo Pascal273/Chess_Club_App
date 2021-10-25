@@ -1,7 +1,8 @@
 
 class Player:
     """The player model."""
-    def __init__(self, first_name: str, last_name: str, birth_date: str, sex: str, rating: int):
+    def __init__(self, first_name: str, last_name: str,
+                 birth_date: str, sex: str, rating: int):
         """Player Constructor
 
         Args:

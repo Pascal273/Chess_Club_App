@@ -10,11 +10,13 @@ class DatabaseOperator:
 
     def __init__(self):
         """DatabaseOperator constructor"""
+
         self.database = Database()
         self.query = Query()
 
     def save_player(self, first_name, last_name, birth_date, sex, rating):
         """Player gets serialized and saved in database"""
+
         serialized_player = Player(
             first_name=first_name,
             last_name=last_name,
@@ -28,22 +30,26 @@ class DatabaseOperator:
     def load_all_players(self):
         """Loads all players and returns them in a list"""
         all_players_serialized = [p for p in self.database.players_table.all() if not p["deleted"]]
+
         return all_players_serialized
 
     def search_player(self, filter_by, key_word):
         """Loads all players matching a given key
            and returns a dict of all matches"""
+
         results = self.database.players_table.search(self.query[filter_by] == key_word)
         return results
 
     def player_by_id(self, player_id: int):
         """Takes a player ID and returns
            the matching Player as a player object"""
+
         player = self.database.players_table.get(doc_id=player_id)
         return player
 
     def update_player(self, player_id, key: str, new_value):
         """Update the value of a given key in the database """
+
         self.database.players_table.update(
             {key: new_value},
             doc_ids=[player_id]
@@ -51,13 +57,14 @@ class DatabaseOperator:
 
     def update_all_matching_players(self, key: str, old_value: str, new_value: str):
         """Updates all matching entries in the player table"""
+
         self.database.players_table.update(
             {key: new_value},
             self.query[key] == old_value
         )
 
     def hard_delete_player(self, player_id: int):
-        """Player Object gets removed from the database file"""
+        """Player Object gets really deleted from the database"""
         self.database.players_table.remove(doc_ids=[player_id])
 
     def delete_player(self, player_id: int):
@@ -67,7 +74,7 @@ class DatabaseOperator:
             doc_ids=[player_id]
         )
 
-    # ------------------------------------------Tournament Operations---------------------------------------------------
+    # ----------------------------------Tournament Operations--------------------------------------
 
     def save_tournament(self,
                         name,
@@ -98,7 +105,8 @@ class DatabaseOperator:
 
     def load_all_tournaments(self):
         """Loads all players and returns them in a list"""
-        all_tournaments_serialized = [t for t in self.database.tournaments_table.all() if not t["deleted"]]
+        all_tournaments_serialized = [
+            t for t in self.database.tournaments_table.all() if not t["deleted"]]
 
         return all_tournaments_serialized
 
@@ -128,7 +136,7 @@ class DatabaseOperator:
         return tournament
 
     def hard_delete_tournament(self, tournament_id):
-        """Tournament Object gets removed from the database file"""
+        """Tournament Object gets really deleted from the database"""
         self.database.tournaments_table.remove(doc_ids=[tournament_id])
 
     def delete_tournament(self, tournament_id: int):

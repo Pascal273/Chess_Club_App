@@ -70,52 +70,60 @@ class NewTournament:
         utils.print_logo()
         self.menu.print_menu()
 
-        # ------------------------------------------Enter Name----------------------------------------------------------
+        # ----------------------------Enter Name-------------------------------
 
         while len(self.name) < 3:
-            self.name = input(f"{self.spacer}What´s the name of the Tournament?: ").title()
+            self.name = input(
+                f"{self.spacer}What´s the name of the Tournament?: ").title()
 
-        # ------------------------------------------Enter Location------------------------------------------------------
+        # ----------------------------Enter Location---------------------------
 
         while len(self.location) < 5:
-            self.location = input(f"\n{self.spacer}What´s the location of the Tournament?: ").title()
+            self.location = input(
+                f"\n{self.spacer}What´s the location of the Tournament?: ").title()
 
-        # ------------------------------------------Enter Date----------------------------------------------------------
+        # ----------------------------Enter Date-------------------------------
 
         date = ""
         while not utils.valid_date(date):
             date = input(
-                f"\n{self.spacer}What´s the start date of the Tournament? (DD.MM.YYYY)\n"
+                f"\n{self.spacer}"
+                f"What´s the start date of the Tournament? (DD.MM.YYYY)\n"
                 f"{self.spacer}(If it´s today you can type 'today'): ")
             if date == "today":
                 date = utils.date_today()
 
         self.date.append(date)
 
-        # ------------------------------------------Enter Time Control--------------------------------------------------
+        # ----------------------------Enter Time Control-----------------------
 
         while self.time_control not in ["bullet", "blitz", "rapid"]:
             self.time_control = input(
-                f"\n{self.spacer}Time control? (bullet / blitz / rapid): ").lower()
+                f"\n{self.spacer}"
+                f"Time control? (bullet / blitz / rapid): ").lower()
 
-        # ------------------------------------------Enter Description---------------------------------------------------
+        # ----------------------------Enter Description------------------------
 
         while len(self.description) < 1:
-            self.description = input(f"\n{self.spacer}Enter a Description: ").capitalize()
+            self.description = input(
+                f"\n{self.spacer}Enter a Description: ").capitalize()
 
-        # ------------------------------------------Enter Number of Rounds----------------------------------------------
+        # ----------------------------Enter Number of Rounds-------------------
 
         while not utils.valid_int(self.number_of_rounds, ):
             self.number_of_rounds = input(
-                f"\n{self.spacer}Number of rounds to play (default is {DEFAULT_ROUNDS}): ") or DEFAULT_ROUNDS
+                f"\n{self.spacer}Number of rounds to play "
+                f"(default is {DEFAULT_ROUNDS}): ") or DEFAULT_ROUNDS
         self.number_of_rounds = int(self.number_of_rounds)
 
-        # --------------------------------------------Select Players----------------------------------------------------
+        # ------------------------------Select Players-------------------------
 
         number_of_players = ""
-        while not utils.valid_player_number(number_of_players, self.number_of_rounds):
+        while not utils.valid_player_number(
+                number_of_players, self.number_of_rounds):
             number_of_players = input(
-                f"\n{self.spacer}Number of participants (min. {self.number_of_rounds + 2}): ")
+                f"\n{self.spacer}Number of participants "
+                f"(min. {self.number_of_rounds + 2}): ")
         number_of_players = int(number_of_players)
 
         self.players = SelectPlayers(number_of_players).selection()
@@ -128,7 +136,8 @@ class NewTournament:
         4. If if user answers 'no' the tournament doesn't get saved.
         """
         ser_players = [Db().player_by_id(id_num) for id_num in self.players]
-        player_name_list = [p["first name"] + " " + p["last name"] for p in ser_players]
+        player_name_list = [
+            p["first name"] + " " + p["last name"] for p in ser_players]
         names = "\n"
         for name in player_name_list:
             names += f"                                         {name}\n\n"
@@ -148,7 +157,8 @@ class NewTournament:
                      Description:        {self.description}\n
                 """)
 
-        if input(f"{self.spacer}Are details about the new tournament correct? (Y/N) "
+        if input(f"{self.spacer}"
+                 f"Are details about the new tournament correct? (Y/N) "
                  ).lower() == "y":
             self.save_tournament()
             print(f"{self.spacer}{self.name} - got saved in the Database")
@@ -174,10 +184,13 @@ class NewTournament:
 
 class SelectPlayers:
     """
-    Takes an int that represents a the number of players that is supposed to participate on the Tournament.
-    Lets the user select players (with a minimal amount of players to fit the number of rounds)
+    Takes an int that represents a the number of players
+    that is supposed to participate on the Tournament.
+    Lets the user select players
+    (with a minimal amount of players to fit the number of rounds)
     and returns them in a list.
-    (works by using the class: ShowPlayers, to display the available players to the user)
+    (works by using the class: ShowPlayers,
+    to display the available players to the user)
     """
     def __init__(self, number_of_players: int):
         """Select Players Constructor"""
@@ -187,7 +200,7 @@ class SelectPlayers:
         self.number_of_participants = number_of_players
 
         self.show_players = ShowPlayers()
-        self.show_players.order()   # user pick´s the order the players will be displayed
+        self.show_players.order()
 
     def selection(self):
         """
@@ -201,7 +214,9 @@ class SelectPlayers:
             picked = "0"
             while not utils.valid_int(picked) or picked in self.player_ids:
                 self.show_players.show_all(not_show=self.player_ids)
-                print(f"{self.spacer}Players in Tournament {len(self.player_ids)} / {self.number_of_participants}")
+                print(f"{self.spacer}Players in Tournament "
+                      f"{len(self.player_ids)} / "
+                      f"{self.number_of_participants}")
                 picked = input(f"{self.spacer}Add to tournament (Enter ID): ")
             picked = int(picked)
 
@@ -215,7 +230,8 @@ class ShowPlayers:
     """
     Displays all players incl. a table of their information,
     sorted by a detail of the users choice.
-    Players that are already added to the tournament will not be displayed anymore.
+    Players that are already added to the tournament
+    will not be displayed anymore.
     """
     def __init__(self):
         self.title = "Pick Participants"
@@ -227,7 +243,8 @@ class ShowPlayers:
             "Show all players sort by sex": self.sort_by_sex,
             "Show all players sort by rating": self.sort_by_rating,
         }
-        self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.menu = menu_creator.MenuScreen(
+            self.title, self.options, self.__class__.__name__)
 
         self.all_players = Db().load_all_players()
 
@@ -244,26 +261,32 @@ class ShowPlayers:
 
     def sort_by_first_name(self):
         """sort´s all players by first name"""
-        self.all_players = sorted(self.all_players, key=lambda x: x.get('first name'))
+        self.all_players = sorted(
+            self.all_players, key=lambda x: x.get('first name'))
 
     def sort_by_last_name(self):
         """sort´s all players by last name"""
-        self.all_players = sorted(self.all_players, key=lambda x: x.get('last name'))
+        self.all_players = sorted(
+            self.all_players, key=lambda x: x.get('last name'))
 
     def sort_by_birth_date(self):
         """sort´s all players by birth date"""
-        self.all_players = sorted(self.all_players, key=lambda x: x.get('birth date'))
+        self.all_players = sorted(
+            self.all_players, key=lambda x: x.get('birth date'))
 
     def sort_by_sex(self):
         """sort´s all players by sex"""
-        self.all_players = sorted(self.all_players, key=lambda x: x.get('sex'))
+        self.all_players = sorted(
+            self.all_players, key=lambda x: x.get('sex'))
 
     def sort_by_rating(self):
         """sort´s all players by rating from highest to lowest"""
-        self.all_players = sorted(self.all_players, key=lambda x: x.get('rating'), reverse=True)
+        self.all_players = sorted(
+            self.all_players, key=lambda x: x.get('rating'), reverse=True)
 
     def show_all(self, not_show: list):
-        """Displays all the available players to the user, also shows if player database is empty it will"""
+        """Displays all the available players to the user,
+        also shows if player database is empty it will"""
         utils.cls()
         utils.print_logo()
         self.menu.print_menu(title_only=True)
@@ -281,8 +304,10 @@ class ShowPlayers:
 class ShowTournaments:
     """
     Displays a menu with the options:
-    - show a list of all finished tournaments (incl. a table of all their information)
-    - show a list of all unfinished tournaments (incl. a table of all their information)
+    - show a list of all finished tournaments
+    (incl. a table of all their information)
+    - show a list of all unfinished tournaments
+    (incl. a table of all their information)
     - search for a tournament by using a specific value
     """
     def __init__(self):
@@ -309,9 +334,12 @@ class ShowTournaments:
         self.menu.user_action()
 
     def show_all_unfinished(self):
-        """Displays all unfinished Tournaments incl. a table of their information"""
+        """Displays all unfinished Tournaments
+        incl. a table of their information"""
         unfinished_tournaments = [
-            t for t in self.all_tournaments_serialized if len(t["rounds"]) < t["number of rounds"]]
+            t for t in self.all_tournaments_serialized
+            if len(t["rounds"]) < t["number of rounds"]
+        ]
 
         menu = menu_creator.MenuScreen(
             title="Unfinished Tournaments",
@@ -340,9 +368,11 @@ class ShowTournaments:
             menu.user_action()
 
     def show_all_finished(self):
-        """Displays all finished Tournaments incl. a table of their information"""
+        """Displays all finished Tournaments
+        incl. a table of their information"""
         finished_tournaments = [
-            t for t in self.all_tournaments_serialized if len(t["rounds"]) == t["number of rounds"]]
+            t for t in self.all_tournaments_serialized
+            if len(t["rounds"]) == t["number of rounds"]]
 
         menu = menu_creator.MenuScreen(
             title="Finished Tournaments",
@@ -383,7 +413,8 @@ class SearchTournament:
             "Search for a Name": self.search_name,
             "Search for a range of Dates": self.search_date,
             "Search for a Location": self.search_location,
-            "Search for a time control (bullet, blitz, rapid)": self.search_time_control,
+            "Search for a time control (bullet, blitz, rapid)":
+                self.search_time_control,
             "Get a Tournament by ID": self.get_by_id
         }
         self.menu = menu_creator.MenuScreen(
@@ -413,10 +444,12 @@ class SearchTournament:
         """
         date_1 = ""
         while not utils.valid_date(date_1):
-            date_1 = input(f"{self.spacer}From which date you want to search? ")
+            date_1 = input(
+                f"{self.spacer}From which date you want to search? ")
         date_2 = ""
         while not utils.valid_date(date_2):
-            date_2 = input(f"{self.spacer}Until which date on should you search? ")
+            date_2 = input(
+                f"{self.spacer}Until which date on should you search? ")
         dates = utils.date_range(date_1, date_2)
         self.search_for("date", dates)
 
@@ -427,7 +460,8 @@ class SearchTournament:
         """
         location = ""
         while len(location) < 3:
-            location = input(f"{self.spacer}What name do you want to search for? ")
+            location = input(
+                f"{self.spacer}What name do you want to search for? ")
         self.search_for("location", location)
 
     def search_time_control(self):
@@ -437,7 +471,8 @@ class SearchTournament:
         """
         t_control = ""
         while len(t_control) < 3:
-            t_control = input(f"{self.spacer}What name do you want to search for? ")
+            t_control = input(
+                f"{self.spacer}What name do you want to search for? ")
         self.search_for("time control", t_control)
 
     def get_by_id(self):
@@ -454,7 +489,8 @@ class SearchTournament:
     def search_for(self, dict_key: str, dict_value: any):
         """
         Takes a dict_key and dict_value.
-        Searches for matches in tournaments with the key, value pair the user gave it
+        Searches for matches in tournaments with the key,
+        value pair the user gave it
 
         Args:
             dict_key (str): a key of that occurs in all tournament objects
@@ -483,7 +519,8 @@ class SearchTournament:
             )
 
         if not t_found:
-            print(f"{self.spacer}No Tournament with that {dict_key.capitalize()} found!")
+            print(f"{self.spacer}No Tournament with that "
+                  f"{dict_key.capitalize()} found!")
             sleep(3)
             SearchTournament()
         else:
@@ -496,21 +533,25 @@ class SearchTournament:
 
 class PlayTournamentMenu:
     """
-    Asks the user in which order the available Tournaments (unfinished Tournaments)
-    are supposed to be displayed, display's them, and lets the user pick one that
-    is going to be played.
+    Asks the user in which order the available Tournaments
+    (unfinished Tournaments)
+    are supposed to be displayed, display's them
+    and lets the user pick one that is going to be played.
     """
     def __init__(self):
         self.spacer = "\n                     "
         self.title = "Play Tournament"
         self.options = {
             "show Tournaments sort by ID": self.sort_by_id,
-            "Show Tournaments sort by date (latest -> oldest)": self.sort_by_date
+            "Show Tournaments sort by date (latest -> oldest)":
+                self.sort_by_date
         }
 
         self.tournaments_serialized = Db().database.tournaments_table
         self.unfinished_tournaments = [
-            t for t in self.tournaments_serialized if len(t["rounds"]) < t["number of rounds"]]
+            t for t in self.tournaments_serialized
+            if len(t["rounds"]) < t["number of rounds"]
+        ]
 
         self.menu = menu_creator.MenuScreen(
             title=self.title,
@@ -536,12 +577,15 @@ class PlayTournamentMenu:
     def sort_by_date(self):
         """sort´s all unfinished tournaments by date"""
         self.unfinished_tournaments = sorted(
-            self.unfinished_tournaments, key=lambda x: x.get('date'[0]), reverse=True)
+            self.unfinished_tournaments,
+            key=lambda x: x.get('date'[0]), reverse=True
+        )
 
     def show_all(self):
         """Displays all unfinished tournaments in the chosen order"""
         if len(self.unfinished_tournaments) == 0:
-            print("\n                     No Tournaments found. Add a new Tournament first!")
+            print("\n                     "
+                  "No Tournaments found. Add a new Tournament first!")
             sleep(3)
             TournamentMenu()
 
@@ -555,7 +599,9 @@ class PlayTournamentMenu:
 
         tournament_id = ""
         while not utils.valid_int(tournament_id) or tournament_id not in available_ids:
-            tournament_id = input(f"{self.spacer}Which tournament do you want to start? (Enter ID): ")
+            tournament_id = input(
+                f"{self.spacer}"
+                f"Which tournament do you want to start? (Enter ID): ")
 
         RunTournament(int(tournament_id))
 
@@ -563,7 +609,8 @@ class PlayTournamentMenu:
 class RunTournament:
     """
     Takes a Tournament ID, loads the tournament, and runs it from the beginning
-    or if it was started already, it will continue wherever it was stopped last time.
+    or if it was started already, it will continue
+    wherever it has stopped last time.
     """
     def __init__(self, tournament_id: int):
         """The Constructor for RunTournament"""
@@ -575,11 +622,13 @@ class RunTournament:
 
     def play_rounds(self):
         """
-        Checks which round is the current one to be played and continues playing them
-        until all rounds are completed
+        Checks which round is the current one to be played and continues
+        playing them until all rounds are completed
         """
-        while self.tournament.get_completed_rounds_nr() < self.tournament.rounds_to_play:
-            title = f"Playing Round {self.tournament.get_current_round_number()}"
+        while self.tournament.get_completed_rounds_nr() \
+                < self.tournament.rounds_to_play:
+            title = f"Playing Round " \
+                    f"{self.tournament.get_current_round_number()}"
             menu = menu_creator.MenuScreen(title)
             utils.cls()
             utils.print_logo()
@@ -591,10 +640,10 @@ class RunTournament:
 
     def current_round(self):
         """
-        Continues playing the current round at the point it was saved last time,
-        loads the right list of pairings depending on the amount of finished rounds
-        (that get created by first_pairing or next_pairing automatic)
-        and saves every match in the database after it is finished.
+        Continues playing the current round at the point it was saved last
+        time, loads the right list of pairings depending on the amount of
+        finished rounds (that get created by first_pairing or next_pairing
+        automatic) and saves every match in the database after it is finished.
         """
         if self.tournament.get_current_round_number() == 1:
             pairs = self.tournament.first_pairing()
@@ -605,12 +654,15 @@ class RunTournament:
             p1 = pair[0][0]
             p2 = pair[1][0]
 
-            print(f"{self.spacer}---Match {self.tournament.get_current_match_number()}---")
-            print(f"{self.spacer}{p1['first name']} {p1['last name']} vs {p2['first name']} {p2['last name']}")
+            print(f"{self.spacer}---Match "
+                  f"{self.tournament.get_current_match_number()}---")
+            print(f"{self.spacer}{p1['first name']} {p1['last name']} vs "
+                  f"{p2['first name']} {p2['last name']}")
 
             result = ""
             while result not in ["0", "1", "2"]:
-                result = input(f"{self.spacer}Winner? (P1 = 1, P2 = 2, Tie = 0): ")
+                result = input(
+                    f"{self.spacer}Winner? (P1 = 1, P2 = 2, Tie = 0): ")
 
             self.tournament.save_match(
                 player_1=p1,
@@ -646,7 +698,8 @@ class RunTournament:
 
 class EditTournament:
     """
-    Lets the user pick a tournament and a value of it that is supposed to be changed.
+    Lets the user pick a tournament and a value of it that
+    is supposed to be changed.
     The value will be updated and saved in the database.
     Displays a confirmation afterwards and returns to TournamentMenus.
     """
@@ -660,7 +713,8 @@ class EditTournament:
             "Change Description": self.update_description,
             "Change Time Control": self.update_time_control
         }
-        self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.menu = menu_creator.MenuScreen(
+            self.title, self.options, self.__class__.__name__)
         self.db = Db()
 
         print("\n\n")
@@ -680,33 +734,38 @@ class EditTournament:
         """Asks the user for a new name and updates it."""
         new_name = ""
         while len(new_name) < 3:
-            new_name = input(f"{self.spacer}New Tournament Name:  ").capitalize()
+            new_name = input(
+                f"{self.spacer}New Tournament Name:  ").capitalize()
         self.db.update_tournament(
             tournament_id=self.tournament_id,
             key="name",
             new_value=new_name
         )
-        print(f"{self.spacer}The Tournaments name has been changed to {new_name}!")
+        print(f"{self.spacer}"
+              f"The Tournaments name has been changed to {new_name}!")
         sleep(2)
 
     def update_location(self):
         """Asks the user for a new location and updates it."""
         new_location = ""
         while len(new_location) < 3:
-            new_location = input(f"{self.spacer}New Tournament Name:  ").title()
+            new_location = input(
+                f"{self.spacer}New Tournament Name:  ").title()
         self.db.update_tournament(
             tournament_id=self.tournament_id,
             key="location",
             new_value=new_location
         )
-        print(f"{self.spacer}The Tournaments location has been changed to {new_location}!")
+        print(f"{self.spacer}"
+              f"The Tournaments location has been changed to {new_location}!")
         sleep(2)
 
     def update_start_date(self):
         """Asks the user for a new start date and updates it."""
         new_start_date = ""
         while not utils.valid_date(new_start_date):
-            new_start_date = input(f"{self.spacer}New Start Date (DD.MM.YYYY):  ")
+            new_start_date = input(
+                f"{self.spacer}New Start Date (DD.MM.YYYY):  ")
         dates = self.db.tournament_by_id(self.tournament_id)["date"]
         dates[0] = new_start_date
 
@@ -715,33 +774,38 @@ class EditTournament:
             key="date",
             new_value=dates
         )
-        print(f"{self.spacer}The Tournaments Start Date has been changed to {new_start_date}!")
+        print(f"{self.spacer}The Tournaments Start Date has been changed to "
+              f"{new_start_date}!")
         sleep(2)
 
     def update_description(self):
         """Asks the user for a new description and updates it."""
         new_description = ""
         while len(new_description) < 3:
-            new_description = input(f"{self.spacer}New Description:  ").capitalize()
+            new_description = input(
+                f"{self.spacer}New Description:  ").capitalize()
         self.db.update_tournament(
             tournament_id=self.tournament_id,
             key="description",
             new_value=new_description
         )
-        print(f"{self.spacer}The Tournaments description has been changed to {new_description}!")
+        print(f"{self.spacer}The Tournaments description has been changed to "
+              f"{new_description}!")
         sleep(2)
 
     def update_time_control(self):
         """Asks the user for a new time control and updates it."""
         new_tc = ""
         while new_tc not in ["bullet", "blitz", "rapid"]:
-            new_tc = input(f"{self.spacer}New Time Control (bullet, blitz, rapid):  ").lower()
+            new_tc = input(f"{self.spacer}New Time Control "
+                           f"(bullet, blitz, rapid):  ").lower()
         self.db.update_tournament(
             tournament_id=self.tournament_id,
             key="time control",
             new_value=new_tc
         )
-        print(f"{self.spacer}The Tournaments time control has been changed to {new_tc}!")
+        print(f"{self.spacer}The Tournaments time control has been changed to "
+              f"{new_tc}!")
         sleep(2)
 
 
@@ -757,7 +821,8 @@ class DeleteTournament:
         self.options = {
             "Delete Tournament": self.delete
         }
-        self.menu = menu_creator.MenuScreen(self.title, self.options, self.__class__.__name__)
+        self.menu = menu_creator.MenuScreen(
+            self.title, self.options, self.__class__.__name__)
 
         print("\n\n")
         self.menu.print_menu(title_only=True)
@@ -774,6 +839,8 @@ class DeleteTournament:
         """Deletes the Tournament (soft delete), prints confirmation and
            turns back to the search player menu."""
         Db().delete_tournament(self.tournament_id)
-        print(f"{self.spacer}The Tournament: {Db().tournament_by_id(self.tournament_id)['name']} was deleted!")
+        print(f"{self.spacer}The Tournament: "
+              f"{Db().tournament_by_id(self.tournament_id)['name']} "
+              f"was deleted!")
         sleep(2)
         TournamentMenu()

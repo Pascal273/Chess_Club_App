@@ -190,7 +190,11 @@ def readable_leaderboard(leaderboard: list):
 
     rows = []
     for (rank, ps) in enumerate(leaderboard, start=1):
-        raw_row = [str(rank), f"{ps[0]['first name']} {ps[0]['last name']}", str(ps[1])]
+        raw_row = [
+            str(rank),
+            f"{ps[0]['first name']} {ps[0]['last name']}",
+            str(ps[1])
+        ]
         rows.append(raw_row)
 
     format_rows = f"\n\n{spacer}{format_head}\n"
@@ -250,8 +254,8 @@ def valid_int(number_string):
 
 
 def valid_player_number(player_num: str, number_of_rounds: int):
-    """Checks if a number-string is valid for a number of players in a tournament"""
-
+    """Checks if a number-string is valid for a number of players
+    in a tournament"""
     available_players = len(Db().database.players_table)
 
     try:
@@ -260,7 +264,8 @@ def valid_player_number(player_num: str, number_of_rounds: int):
             return True
 
         elif number > available_players:
-            print(f"\n                     Only {available_players} Players in database!")
+            print(f"\n                     Only {available_players} "
+                  f"Players in database!")
             return False
 
         else:
@@ -271,8 +276,12 @@ def valid_player_number(player_num: str, number_of_rounds: int):
 
 
 def valid_tournament_id(tournament_id: str):
-    """Takes an int - string and checks if it's a valid or existing doc_id for a tournament """
-    all_tournament_ids = [t.doc_id for t in Db().database.tournaments_table.all() if not t["deleted"]]
+    """Takes an int - string and checks if it's a valid
+    or existing doc_id for a tournament """
+    all_tournament_ids = [
+        t.doc_id for t in Db().database.tournaments_table.all()
+        if not t["deleted"]
+    ]
 
     try:
         number = int(tournament_id)

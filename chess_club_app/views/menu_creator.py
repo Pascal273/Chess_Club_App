@@ -29,7 +29,8 @@ class MenuScreen:
         self.title_size = "---------------------"
         self.menu_spacer = "                     "
         self.dashes = int((len(self.title_size) - len(title)) / 2) * "-"
-        self.title_layout = f"{self.menu_spacer}{self.dashes}{self.title}{self.dashes}"
+        self.title_layout = f"{self.menu_spacer}{self.dashes}" \
+                            f"{self.title}{self.dashes}"
         self.opt_num = 1
         self.option_rows = ""
         self.option_keys = []
@@ -87,7 +88,8 @@ class MenuScreen:
             turn_back_option = "Return to Tournament Menu"
 
         elif self.current_site in ["SelectPlayers", "ShowPlayers"]:
-            turn_back_option = "Cancel tournament creation -> return to Tournament Menu"
+            turn_back_option = "Cancel tournament creation -> " \
+                               "return to Tournament Menu"
 
         if len(self.options) == 0 or title_only:
             menu = f"\n{self.title_layout}\n"
@@ -97,22 +99,26 @@ class MenuScreen:
             if type(self.options) is list:
                 if not self.option_keys:
                     for option in self.options:
-                        self.option_rows += f"{self.menu_spacer}[{self.opt_num}] {option}\n\n"
+                        self.option_rows += f"{self.menu_spacer}" \
+                                            f"[{self.opt_num}] {option}\n\n"
                         self.option_keys.append(option)
                         self.opt_num += 1
 
             else:
                 if not self.option_keys:
                     for option, command in self.options.items():
-                        self.option_rows += f"{self.menu_spacer}[{self.opt_num}] {option}\n\n"
+                        self.option_rows += f"{self.menu_spacer}" \
+                                            f"[{self.opt_num}] {option}\n\n"
                         self.option_keys.append(option)
                         self.opt_num += 1
 
             if not self.title or options_only:
-                menu = f"\n{self.option_rows}\n\n{self.menu_spacer}[0] {turn_back_option}\n\n"
+                menu = f"\n{self.option_rows}\n\n{self.menu_spacer}[0] " \
+                       f"{turn_back_option}\n\n"
 
             else:
-                menu = f"\n{self.title_layout}\n\n{self.option_rows}\n\n{self.menu_spacer}[0] {turn_back_option}\n\n\n"
+                menu = f"\n{self.title_layout}\n\n{self.option_rows}\n\n" \
+                       f"{self.menu_spacer}[0] {turn_back_option}\n\n\n"
 
             print(menu)
 
@@ -121,7 +127,8 @@ class MenuScreen:
         answer = ""
 
         while not valid_menu_choice(answer, self.opt_num):
-            answer = input(f"\033[F{self.menu_spacer}What would you like to do? ")
+            answer = input(
+                f"\033[F{self.menu_spacer}What would you like to do? ")
 
         if int(answer) == 0:
             turn_back_to(self.current_site)

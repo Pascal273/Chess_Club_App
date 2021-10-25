@@ -24,7 +24,8 @@ class Tournament:
                 players (list): list of participants
                 time_control (str): bullet, blitz, or rapid
                 description (str): description of the tournament
-                leaderboard (list): a list of lists, with a player obj and a score in each sub lists
+                leaderboard (list): a list of lists, with a player obj
+                and a score in each sub lists
         """
         self.name = name
         self.location = location

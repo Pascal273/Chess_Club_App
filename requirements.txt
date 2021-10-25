@@ -1,1 +1,9 @@
-tinydb~=4.5.1
+pip~=21.1.1
+flake8~=4.0.1
+pyflakes~=2.4.0
+MarkupSafe~=2.0.1
+Pygments~=2.10.0
+setuptools~=56.0.0
+Jinja2~=3.0.2
+zipp~=3.6.0
+tinydb~=4.5.2
