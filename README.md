@@ -24,7 +24,7 @@ which is capable to do the following things:
  or `source .venv/bin/activate` (OS)
 4. Run the command: python -m chess_club_app
 
-# How to create a Flake8 reports:
+# How to create a Flake8 html report:
 1. Open your terminal
 2. Navigate to the directory that contains the "chess_club_app" folder
 3. Activate the environment by running: 
