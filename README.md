@@ -12,7 +12,10 @@ which is capable to do the following things:
 3. Open your terminal.
 4. Navigate to the folder with the "chess_club_app" folder and requirements.txt in it
 5. Create your Virtual Environment by running the command: `python -m venv .venv`
-6. Activate the Environment by running: `.venv\Scripts\activate.bat` (Windows) or `source .venv/bin/activate` (OS)
+6. Activate the Environment by running: 
+ `.venv\Scripts\activate.bat` (Windows) 
+ or `.venv\Scripts\activate.ps1` (Powershell)
+ or `source .venv/bin/activate` (OS)
 7. Install the Requirements by running the command: `pip install -r requirements.txt`
    
 # How to run the program:
