@@ -7,10 +7,8 @@ from chess_club_app.controllers.database_operator import DatabaseOperator
 
 class PlayerMenu:
     """Displays options for player related operations"""
-
     def __init__(self):
         """ PlayerMenu Constructor"""
-
         self.title = "Player Menu"
         self.options = {
             "Add a new player": AddNewPlayer,
@@ -21,7 +19,6 @@ class PlayerMenu:
 
     def player_main_menu(self):
         """Shows the player main menu"""
-
         utils.cls()
         utils.print_logo()
         menu = menu_creator.MenuScreen(
@@ -35,7 +32,6 @@ class PlayerMenu:
 
 class AddNewPlayer:
     """New player creator"""
-
     def __init__(self):
         """New player constructor"""
 
@@ -57,7 +53,6 @@ class AddNewPlayer:
 
     def enter_player_details(self):
         """ask user for the details of the new player"""
-
         utils.cls()
         utils.print_logo()
         self.menu.print_menu()
@@ -90,7 +85,6 @@ class AddNewPlayer:
         3. If user answers 'yes' the player gets saved.
            If if user answers 'no' the player doesn't get saved.
         """
-
         utils.cls()
         utils.print_logo()
         menu = menu_creator.MenuScreen("Check and Approve")
@@ -114,7 +108,6 @@ class AddNewPlayer:
 
     def save_player(self):
         """Saves new Player in the database"""
-
         DatabaseOperator().save_player(
             first_name=self.first_name,
             last_name=self.last_name,
@@ -127,7 +120,6 @@ class AddNewPlayer:
 class ShowAllPlayers:
     """Displays all players incl. table of their information,
        sorted by a detail of the users choice"""
-
     def __init__(self):
         self.title = "Show all Players"
         self.options = {
@@ -163,6 +155,7 @@ class ShowAllPlayers:
         self.menu_2.user_action()
 
     def sort_by_id(self):
+        """Does nothing, because the list is already sorted by ID"""
         pass
 
     def sort_by_first_name(self):
@@ -186,7 +179,7 @@ class ShowAllPlayers:
         self.all_players = sorted(self.all_players, key=lambda x: x.get('rating'), reverse=True)
 
     def show_all(self):
-
+        """Displays all players and a table of their details"""
         if len(self.all_players) == 0:
             print("\n                     No Players in Database!")
 
@@ -218,8 +211,7 @@ class SearchPlayer:
         self.show_options()
 
     def show_options(self):
-        """Displays the available Options"""
-
+        """Displays the available Options and lets the user pick one"""
         utils.cls()
         utils.print_logo()
         self.menu.print_menu()
@@ -244,7 +236,10 @@ class SearchPlayer:
         self.search_for("doc_id")
 
     def search_for(self, dict_key: str):
-
+        """
+        Takes a dict_key - string, asks the user for a new value,
+        updates and saves the value of the player in the Database
+        """
         utils.cls()
         utils.print_logo()
         self.menu.print_menu(title_only=True)
@@ -285,7 +280,6 @@ class SearchPlayer:
 class EditOrDelete:
     """Takes a player object and ask´s the
        user if he wants to edit or delete it"""
-
     def __init__(self, player_obj):
         self.spacer = "\n                     "
         self.title = "Edit or Delete"
@@ -313,10 +307,12 @@ class EditOrDelete:
 
 
 class EditPlayer:
-    """The Player Editor -> ask´s the user which
-       Detail of the player he want to change"""
-
+    """
+    Takes a player object and ask´s the user which
+    Detail of the player is supposed to be changed
+    """
     def __init__(self, player_object):
+        """The Constructor of EditPlayer"""
         self.spacer = "\n                     "
         self.title = "Player Editor"
         self.options = {
@@ -338,6 +334,8 @@ class EditPlayer:
         self.menu.user_action()
 
     def update_first_name(self):
+        """Asks the user for a new first name, updates it in the database
+        and displays a confirmation."""
         new_first_name = ""
         while len(new_first_name) < 2:
             new_first_name = input(f"{self.spacer}New First Name:  ").capitalize()
@@ -352,6 +350,8 @@ class EditPlayer:
         SearchPlayer()
 
     def update_lastname(self):
+        """Asks the user for a new last name, updates it in the database
+        and displays a confirmation."""
         new_last_name = ""
         while len(new_last_name) < 2:
             new_last_name = input(f"{self.spacer}New Last Name:  ").capitalize()
@@ -366,6 +366,8 @@ class EditPlayer:
         SearchPlayer()
 
     def update_birth_date(self):
+        """Asks the user for a new birth date, updates it in the database
+        and displays a confirmation."""
         new_birth_date = ""
         while not utils.valid_date(new_birth_date):
             new_birth_date = input(f"{self.spacer}New Birth Date:  ").capitalize()
@@ -380,6 +382,8 @@ class EditPlayer:
         SearchPlayer()
 
     def update_sex(self):
+        """Asks the user for a new value for sex, updates it in the database
+        and displays a confirmation."""
         new_sex = ""
         while not utils.valid_sex(new_sex):
             new_sex = input(f"{self.spacer}New Sex:  ").upper()
@@ -394,6 +398,8 @@ class EditPlayer:
         SearchPlayer()
 
     def update_rating(self):
+        """Asks the user for a new rating, updates it in the database
+        and displays a confirmation."""
         new_rating = -1
         while not utils.valid_rating(new_rating):
             new_rating = input(f"{self.spacer}New Rating:  ")
@@ -409,6 +415,7 @@ class EditPlayer:
         SearchPlayer()
 
     def open_delete_player(self):
+        """Opens the delete player menu"""
         DeletePlayer(self.player_object).delete()
 
 
@@ -417,6 +424,7 @@ class DeletePlayer:
        that he wants to delete the player from the database."""
 
     def __init__(self, player_object):
+        """The constructor for DeletePlayer"""
         self.spacer = "\n                     "
         self.title = "Delete Player"
         self.options = {

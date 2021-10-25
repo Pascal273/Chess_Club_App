@@ -1,6 +1,6 @@
 
 class Tournament:
-
+    """The Model for Tournament"""
     def __init__(
             self,
             name: str,
@@ -13,21 +13,19 @@ class Tournament:
             description: str,
             leaderboard: list
             ):
-
         """Tournament Constructor
 
-        Args:
-            name (str): name of the tournament
-            location (str): location of the tournaments
-            date (str): date or range of dates of the tournament
-            number of rounds (int): rounds to play
-            rounds (list): list of round instances
-            players (list): list of participants
-            time_control (str): bullet, blitz, or rapid
-            description (str): description of the tournament
-            leaderboard (list): a list of lists, with a player obj and a score in each sub lists
+            Args:
+                name (str): name of the tournament
+                location (str): location of the tournaments
+                date (str): date or range of dates of the tournament
+                number of rounds (int): rounds to play
+                rounds (list): list of round instances
+                players (list): list of participants
+                time_control (str): bullet, blitz, or rapid
+                description (str): description of the tournament
+                leaderboard (list): a list of lists, with a player obj and a score in each sub lists
         """
-
         self.name = name
         self.location = location
         self.date = date

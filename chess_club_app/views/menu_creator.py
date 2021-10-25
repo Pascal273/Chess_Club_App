@@ -21,7 +21,7 @@ class MenuScreen:
             title: str = None,
             options: dict = None,
             current_site: str = None):
-
+        """Constructor for MenuScreen"""
         self.title = title
         self.options = options
         self.current_site = current_site

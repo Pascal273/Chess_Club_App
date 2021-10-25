@@ -6,7 +6,9 @@ from chess_club_app.views.tournament_menus import TournamentMenu
 
 
 class MainMenu:
-
+    """The Start Page of the chess club app,
+    displays the two options for player or tournament
+    related menus"""
     def __init__(self):
         """MainMenu Constructor"""
 
@@ -18,8 +20,7 @@ class MainMenu:
         self.show_main_menu()
 
     def show_main_menu(self):
-        """Shows the Main Menu"""
-
+        """Displays the Main Menu"""
         tools.cls()
         tools.print_logo()
         menu = chess_club_app.views.menu_creator.MenuScreen(
