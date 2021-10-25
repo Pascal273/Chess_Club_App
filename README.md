@@ -22,7 +22,7 @@ which is capable to do the following things:
  `.venv\Scripts\activate.bat` (Windows) 
  or `.venv\Scripts\activate.ps1` (Powershell)
  or `source .venv/bin/activate` (OS)
-4. Run the command: python -m chess_club_app
+4. Run the command: `python -m chess_club_app`
 
 # How to create a Flake8 html report:
 1. Open your terminal
@@ -31,10 +31,11 @@ which is capable to do the following things:
  `.venv\Scripts\activate.bat` (Windows) 
  or `.venv\Scripts\activate.ps1` (Powershell)   
  or `source .venv/bin/activate` (OS)
-4. Run the command: flake8 --format=html --htmldir=flake-report
+4. Run the command: `flake8 --format=html --htmldir=flake-report`
    
 ## Notes
 - The program will create a database folder and file automatically
+- The folder and files for the flake8 report will be created automatically
 
 ## Technologies
 - Python version 3.9.5
