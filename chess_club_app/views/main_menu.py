@@ -1,5 +1,5 @@
-import chess_club_app.controllers.menu_creator
-import chess_club_app.controllers.util as tools
+import chess_club_app.views.menu_creator
+import chess_club_app.controllers.utils as tools
 
 from chess_club_app.views.player_menus import PlayerMenu
 from chess_club_app.views.tournament_menus import TournamentMenu
@@ -22,7 +22,7 @@ class MainMenu:
 
         tools.cls()
         tools.print_logo()
-        menu = chess_club_app.controllers.menu_creator.MenuScreen(
+        menu = chess_club_app.views.menu_creator.MenuScreen(
             title=self.title,
             options=self.options,
             current_site=self.__class__.__name__)

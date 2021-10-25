@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from chess_club_app.controllers import util
+from chess_club_app.controllers import utils
 from chess_club_app.controllers.database_operator import DatabaseOperator as Db
 from chess_club_app.models.round import Round
 from chess_club_app.models.match import Match
@@ -9,9 +9,17 @@ ROUND_NAME = "Round"
 
 
 class TournamentOperator:
-    """The Tournament Operator"""
+    """The Tournament Operator, gets a Tournament object by doc_id and play's all the rounds and matches
+    no matter if the Tournament is new or if a number of rounds or matches was played already.
+    It will pair the players according to the swiss tournament system and allows no pairing to
+    occur twice.
 
+    Args:
+        tournament_id (int): doc_id of the tournament object that is supposed to be played
+    """
     def __init__(self, tournament_id: int):
+        """Constructor for the Tournament operator"""
+
         self.tournament_id = tournament_id
         self.tournament = Db().tournament_by_id(self.tournament_id)
 
@@ -218,7 +226,7 @@ class TournamentOperator:
             t_start_date = self.tournament["date"][0]
             t_end_date = datetime.today().strftime("%d.%m.%Y")
             if t_start_date != t_end_date:
-                date = util.date_range(t_start_date, t_end_date)
+                date = utils.date_range(t_start_date, t_end_date)
 
                 Db().update_tournament(
                     tournament_id=self.tournament_id,

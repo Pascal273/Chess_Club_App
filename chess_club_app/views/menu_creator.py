@@ -1,4 +1,4 @@
-from chess_club_app.controllers.util import valid_menu_choice, turn_back_to
+from chess_club_app.controllers.utils import valid_menu_choice, turn_back_to
 
 
 class MenuScreen:
@@ -55,7 +55,10 @@ class MenuScreen:
         elif self.current_site == "MainMenu":
             turn_back_option = "Close Program"
 
-        elif self.current_site in ["PlayerMenu", "TournamentMenu"]:
+        elif self.current_site in [
+            "PlayerMenu",
+            "TournamentMenu"
+        ]:
             turn_back_option = "Return Home"
 
         elif self.current_site in [
@@ -75,8 +78,10 @@ class MenuScreen:
         elif self.current_site in [
             "NewTournament",
             "ShowTournaments",
+            "SearchTournament",
             "PlayTournamentMenu",
             "DeleteTournament",
+            "EditTournament",
             "Run Tournament"
         ]:
             turn_back_option = "Return to Tournament Menu"
@@ -90,16 +95,18 @@ class MenuScreen:
 
         else:
             if type(self.options) is list:
-                for option in self.options:
-                    self.option_rows += f"{self.menu_spacer}[{self.opt_num}] {option}\n\n"
-                    self.option_keys.append(option)
-                    self.opt_num += 1
+                if not self.option_keys:
+                    for option in self.options:
+                        self.option_rows += f"{self.menu_spacer}[{self.opt_num}] {option}\n\n"
+                        self.option_keys.append(option)
+                        self.opt_num += 1
 
             else:
-                for option, command in self.options.items():
-                    self.option_rows += f"{self.menu_spacer}[{self.opt_num}] {option}\n\n"
-                    self.option_keys.append(option)
-                    self.opt_num += 1
+                if not self.option_keys:
+                    for option, command in self.options.items():
+                        self.option_rows += f"{self.menu_spacer}[{self.opt_num}] {option}\n\n"
+                        self.option_keys.append(option)
+                        self.opt_num += 1
 
             if not self.title or options_only:
                 menu = f"\n{self.option_rows}\n\n{self.menu_spacer}[0] {turn_back_option}\n\n"
@@ -110,7 +117,7 @@ class MenuScreen:
             print(menu)
 
     def user_action(self):
-
+        """Asks the user for the next action and executes it"""
         answer = ""
 
         while not valid_menu_choice(answer, self.opt_num):

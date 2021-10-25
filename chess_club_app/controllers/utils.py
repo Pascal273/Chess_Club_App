@@ -100,6 +100,7 @@ def turn_back_to(current_class_name: str):
         "SelectPlayers",
         "ShowPlayers",
         "ShowTournaments",
+        "SearchTournament",
         "PlayTournamentMenu",
         "DeleteTournament",
         "RunTournament"
@@ -270,6 +271,7 @@ def valid_player_number(player_num: str, number_of_rounds: int):
 
 
 def valid_tournament_id(tournament_id: str):
+    """Takes an int - string and checks if it's a valid or existing doc_id for a tournament """
     all_tournament_ids = [t.doc_id for t in Db().database.tournaments_table.all() if not t["deleted"]]
 
     try:

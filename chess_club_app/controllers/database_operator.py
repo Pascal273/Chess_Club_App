@@ -29,7 +29,6 @@ class DatabaseOperator:
 
     def load_all_players(self):
         """Loads all players and returns them in a list"""
-
         all_players_serialized = [p for p in self.database.players_table.all() if not p["deleted"]]
 
         return all_players_serialized
@@ -111,7 +110,7 @@ class DatabaseOperator:
 
     def search_tournament(self, filter_by: str, key_word):
         """Loads all tournaments matching a given key
-           and returns a dict of all matches"""
+           and returns a list of all matches"""
 
         results = self.database.tournaments_table.search(self.query[filter_by] == key_word)
         return results
