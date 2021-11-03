@@ -518,7 +518,7 @@ class SearchTournament:
                 key_word=dict_value
             )
 
-        if not t_found:
+        if not t_found or t_found == [None]:
             print(f"{self.spacer}No Tournament with that "
                   f"{dict_key.capitalize()} found!")
             sleep(3)
