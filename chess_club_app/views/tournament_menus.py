@@ -767,12 +767,17 @@ class EditTournament:
             new_start_date = input(
                 f"{self.spacer}New Start Date (DD.MM.YYYY):  ")
         dates = self.db.tournament_by_id(self.tournament_id)["date"]
-        dates[0] = new_start_date
+        old_end_date = dates[-1]
+
+        if new_start_date != old_end_date:
+            new_dates = utils.date_range(new_start_date, old_end_date)
+        else:
+            new_dates = [new_start_date]
 
         self.db.update_tournament(
             tournament_id=self.tournament_id,
             key="date",
-            new_value=dates
+            new_value=new_dates
         )
         print(f"{self.spacer}The Tournaments Start Date has been changed to "
               f"{new_start_date}!")
