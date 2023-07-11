@@ -60,9 +60,14 @@ class NewTournament:
         self.leaderboard = []
 
         self.saved_players = len(Db().load_all_players())
-
-        self.enter_data()
-        self.confirm()
+        if self.saved_players < 6:
+            print(f"      Please add {6 - self.saved_players} more players to start a Tournament!")
+            sleep(3)
+            utils.cls()
+            TournamentMenu()
+        else:
+            self.enter_data()
+            self.confirm()
 
     def enter_data(self):
         """prompts the user to enter all required tournament data"""
